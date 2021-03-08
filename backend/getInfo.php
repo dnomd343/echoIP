@@ -2,7 +2,7 @@
 
 include("getCountry.php");
 
-function getIPInfo($ip, $is_cli) {
+function getIPInfo($ip) {
     $specialIpInfo = getSpecialIpInfo($ip);
     if (is_string($specialIpInfo)) {
         $info['ip'] = $ip;
@@ -15,7 +15,6 @@ function getIPInfo($ip, $is_cli) {
         $info['isp'] = $specialIpInfo;
     } else {
         $rawIspInfo = getIspInfo($ip);
-
         $info['ip'] = $ip;
         $info['as'] = getAS($rawIspInfo);
         $info['city'] = $rawIspInfo['city'];
@@ -27,7 +26,7 @@ function getIPInfo($ip, $is_cli) {
         $info['country'] .= "（".get_country($rawIspInfo['country'])['cn']."）";
     }
 
-    if ($is_cli == true) {
+    if ($_GET['cli'] == "true") {
         $cli = "IP: ".$info['ip'].PHP_EOL;
         $cli = $cli."AS: ".$info['as'].PHP_EOL;
         $cli = $cli."City: ".$info['city'].PHP_EOL;
@@ -39,6 +38,7 @@ function getIPInfo($ip, $is_cli) {
         return $cli;
     }
 
+    header('Content-Type: application/json; charset=utf-8');
     return json_encode($info);
 }
 
