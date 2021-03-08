@@ -1,5 +1,7 @@
 <?php
 
+include("getCountry.php");
+
 function getIPInfo($ip, $is_cli) {
     $specialIpInfo = getSpecialIpInfo($ip);
     if (is_string($specialIpInfo)) {
@@ -22,6 +24,7 @@ function getIPInfo($ip, $is_cli) {
         $info['timezone'] = $rawIspInfo['timezone'];
         $info['loc'] = $rawIspInfo['loc'];
         $info['isp'] = getIsp($rawIspInfo);
+        $info['country'] .= "（".get_country($rawIspInfo['country'])['cn']."）";
     }
 
     if ($is_cli == true) {
