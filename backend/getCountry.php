@@ -17,7 +17,7 @@ function get_country($code) {
     $dat = $db->query('SELECT * FROM main WHERE alpha_2="'.$code.'";')->fetchArray(SQLITE3_ASSOC);
     if ($dat) {
         $name_dat['en'] = $code." - ".$dat['name_en'];
-        $name_dat['cn'] = $dat['name_cn'];//."（".$dat['location']."）";
+        $name_dat['cn'] = $dat['name_cn'];
     } else {
         $name_dat['en'] = $code." - Unknow";
         $name_dat['cn'] = null;
