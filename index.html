@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dnomd343 - IP</title>
+</head>
+<script src="https://cdn.staticfile.org/jquery/1.11.0/jquery.min.js"></script>
+<script>
+  $(document).ready(function(){
+    $.get("/ip",function(data){
+      $("input").val(data);
+    });
+    $("table").hide();
+    $("button").click(function(){
+      $("p").text("Please Wait...");
+      $("table").hide();
+      $.get("/info/"+$("input").val(),function(data){
+        console.log(data);
+        $("p").text("");
+        $("table").show();
+        $("#ip").text(data.ip);
+        $("#as").text(data.as);
+        $("#city").text(data.city);
+        $("#region").text(data.region);
+        $("#country").text(data.country);
+        $("#timezone").text(data.timezone);
+        $("#loc").text(data.loc);
+        $("#isp").text(data.isp);
+      });
+    });
+  });
+</script>
+<body>
+
+  <h2>IP info</h2>
+  <input type="text">
+  <button>Submit</button>
+  <p></p>
+  <table border="1">
+    <tr>
+      <td>IP</th>
+      <td id="ip"></th>
+    </tr>
+    <tr>
+      <td>AS</th>
+      <td id="as"></th>
+    </tr>
+    <tr>
+      <td>City</th>
+      <td id="city"></th>
+    </tr>
+    <tr>
+      <td>Region</th>
+      <td id="region"></th>
+    </tr>
+    <tr>
+      <td>Country</th>
+      <td id="country"></th>
+    </tr>
+    <tr>
+      <td>Timezone</th>
+      <td id="timezone"></th>
+    </tr>
+    <tr>
+      <td>Location</th>
+      <td id="loc"></th>
+    </tr>
+    <tr>
+      <td>ISP</td>
+      <td id="isp"></td>
+    </tr>
+  </table>
+</body>
+</html>
