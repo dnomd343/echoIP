@@ -1,8 +1,11 @@
 <?php
 
 include("getCountry.php");
+include("qqwry.php");
 
 function getIPInfo($ip) {
+    $qqwry = new IpLocation();
+    $detail = $qqwry->getDetail($ip);
     $specialIpInfo = getSpecialIpInfo($ip);
     if (is_string($specialIpInfo)) {
         $info['ip'] = $ip;
@@ -13,6 +16,8 @@ function getIPInfo($ip) {
         $info['timezone'] = null;
         $info['loc'] = null;
         $info['isp'] = $specialIpInfo;
+        $info['cidr'] = $detail['cidr'];
+        $info['detail'] = $detail['addr'];
     } else {
         $rawIspInfo = getIspInfo($ip);
         $info['ip'] = $ip;
@@ -20,21 +25,25 @@ function getIPInfo($ip) {
         $info['city'] = $rawIspInfo['city'];
         $info['region'] = $rawIspInfo['region'];
         $info['country'] = get_country($rawIspInfo['country'])['en'];
+        $info['country'] .= "（".get_country($rawIspInfo['country'])['cn']."）";
         $info['timezone'] = $rawIspInfo['timezone'];
         $info['loc'] = $rawIspInfo['loc'];
         $info['isp'] = getIsp($rawIspInfo);
-        $info['country'] .= "（".get_country($rawIspInfo['country'])['cn']."）";
+        $info['cidr'] = $detail['cidr'];
+        $info['detail'] = $detail['addr'];
     }
 
     if ($_GET['cli'] == "true") {
         $cli = "IP: ".$info['ip'].PHP_EOL;
-        $cli = $cli."AS: ".$info['as'].PHP_EOL;
-        $cli = $cli."City: ".$info['city'].PHP_EOL;
-        $cli = $cli."Region: ".$info['region'].PHP_EOL;
-        $cli = $cli."Country: ".$info['country'].PHP_EOL;
-        $cli = $cli."Timezone: ".$info['timezone'].PHP_EOL;
-        $cli = $cli."Location: ".$info['loc'].PHP_EOL;
-        $cli = $cli."ISP: ".$info['isp'].PHP_EOL;
+        $cli .= "AS: ".$info['as'].PHP_EOL;
+        $cli .= "City: ".$info['city'].PHP_EOL;
+        $cli .= "Region: ".$info['region'].PHP_EOL;
+        $cli .= "Country: ".$info['country'].PHP_EOL;
+        $cli .= "Timezone: ".$info['timezone'].PHP_EOL;
+        $cli .= "Location: ".$info['loc'].PHP_EOL;
+        $cli .= "ISP: ".$info['isp'].PHP_EOL;
+        $cli .= "CIDR: ".$info['cidr'].PHP_EOL;
+        $cli .= "Detail: ".$info['detail'].PHP_EOL;
         return $cli;
     }
 

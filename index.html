@@ -26,6 +26,8 @@
         $("#timezone").text(data.timezone);
         $("#loc").text(data.loc);
         $("#isp").text(data.isp);
+        $("#cidr").text(data.cidr);
+        $("#detail").text(data.detail);
       });
     });
   });
@@ -68,6 +70,14 @@
     <tr>
       <td>ISP</td>
       <td id="isp"></td>
+    </tr>
+    <tr>
+      <td>CIDR</td>
+      <td id="cidr"></td>
+    </tr>
+    <tr>
+      <td>Detail</td>
+      <td id="detail"></td>
     </tr>
   </table>
 </body>
