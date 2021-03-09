@@ -4,10 +4,10 @@ include("getCountry.php");
 include("qqwry.php");
 
 function getIPInfo($ip) {
-    $qqwry = new IpLocation();
+    $qqwry = new QQWry();
     $detail = $qqwry->getDetail($ip);
-    $specialIpInfo = getSpecialIpInfo($ip);
-    if (is_string($specialIpInfo)) {
+    $specialInfo = getSpecialInfo($ip);
+    if (is_string($specialInfo)) {
         $info['ip'] = $ip;
         $info['as'] = null;
         $info['city'] = null;
@@ -15,25 +15,23 @@ function getIPInfo($ip) {
         $info['country'] = null;
         $info['timezone'] = null;
         $info['loc'] = null;
-        $info['isp'] = $specialIpInfo;
-        $info['cidr'] = $detail['cidr'];
-        $info['detail'] = $detail['addr'];
+        $info['isp'] = $specialInfo;
     } else {
-        $rawIspInfo = getIspInfo($ip);
+        $rawIspInfo = getInfo($ip);
         $info['ip'] = $ip;
         $info['as'] = getAS($rawIspInfo);
         $info['city'] = $rawIspInfo['city'];
         $info['region'] = $rawIspInfo['region'];
-        $info['country'] = get_country($rawIspInfo['country'])['en'];
-        $info['country'] .= "（".get_country($rawIspInfo['country'])['cn']."）";
+        $info['country'] = getCountry($rawIspInfo['country'])['en'];
+        $info['country'] .= "（".getCountry($rawIspInfo['country'])['cn']."）";
         $info['timezone'] = $rawIspInfo['timezone'];
         $info['loc'] = $rawIspInfo['loc'];
         $info['isp'] = getIsp($rawIspInfo);
-        $info['cidr'] = $detail['cidr'];
-        $info['detail'] = $detail['addr'];
     }
+    $info['cidr'] = $detail['beginIP'] . ' - ' . $detail['endIP'];
+    $info['detail'] = $detail['dataA'] . $detail['dataB'];
 
-    if ($_GET['cli'] == "true") {
+    if ($_GET['cli'] == "true") { // 使用命令行模式
         $cli = "IP: ".$info['ip'].PHP_EOL;
         $cli .= "AS: ".$info['as'].PHP_EOL;
         $cli .= "City: ".$info['city'].PHP_EOL;
@@ -47,11 +45,11 @@ function getIPInfo($ip) {
         return $cli;
     }
 
-    header('Content-Type: application/json; charset=utf-8');
+    header('Content-Type: application/json; charset=utf-8'); // 以JSON格式发送
     return json_encode($info);
 }
 
-function getSpecialIpInfo($ip) {
+function getSpecialInfo($ip) { // 识别特殊IP地址
     if ('::1' === $ip) {
         return 'localhost IPv6 access';
     }
@@ -76,12 +74,11 @@ function getSpecialIpInfo($ip) {
     return null;
 }
 
-function getIspInfo($ip) {
-    $json = file_get_contents('https://ipinfo.io/'.$ip.'/json');
+function getInfo($ip) { // 获取IP详细信息
+    $json = file_get_contents('https://ipinfo.io/' . $ip . '/json');
     if (!is_string($json)) {
         return null;
     }
-
     $data = json_decode($json, true);
     if (!is_array($data)) {
         return null;
@@ -89,7 +86,7 @@ function getIspInfo($ip) {
     return $data;
 }
 
-function getIsp($rawIspInfo) {
+function getIsp($rawIspInfo) { // 提取ISP信息
     if (
         !is_array($rawIspInfo)
         || !array_key_exists('org', $rawIspInfo)
@@ -101,7 +98,7 @@ function getIsp($rawIspInfo) {
     return preg_replace('/AS\\d+\\s/', '', $rawIspInfo['org']);
 }
 
-function getAS($rawIspInfo) {
+function getAS($rawIspInfo) { // 提取AS信息
     if (
         !is_array($rawIspInfo)
         || !array_key_exists('org', $rawIspInfo)

@@ -1,16 +1,13 @@
 <?php
-$db_path = 'country.db';
-$db = new SQLiteDB;
 
-class SQLiteDB extends SQLite3 {
+class countryDB extends SQLite3 {
     function __construct() {
-        global $db_path;
-        $this->open($db_path);
+        $this->open('country.db'); // 国家地区缩写及代号数据库
     }
 }
 
-function get_country($code) {
-    global $db;
+function getCountry($code) { // 根据两位国家代码获取英文与中文全称
+    $db = new countryDB;
     if ($code == null) {
         return null;
     }
