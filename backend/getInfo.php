@@ -28,20 +28,20 @@ function getIPInfo($ip) {
         $info['loc'] = $rawIspInfo['loc'];
         $info['isp'] = getIsp($rawIspInfo);
     }
-    $info['cidr'] = $detail['beginIP'] . ' - ' . $detail['endIP'];
+    $info['scope'] = tryCIDR($detail['beginIP'], $detail['endIP']);
     $info['detail'] = $detail['dataA'] . $detail['dataB'];
 
     if ($_GET['cli'] == "true") { // 使用命令行模式
-        $cli = "IP: ".$info['ip'].PHP_EOL;
-        $cli .= "AS: ".$info['as'].PHP_EOL;
-        $cli .= "City: ".$info['city'].PHP_EOL;
-        $cli .= "Region: ".$info['region'].PHP_EOL;
-        $cli .= "Country: ".$info['country'].PHP_EOL;
-        $cli .= "Timezone: ".$info['timezone'].PHP_EOL;
-        $cli .= "Location: ".$info['loc'].PHP_EOL;
-        $cli .= "ISP: ".$info['isp'].PHP_EOL;
-        $cli .= "CIDR: ".$info['cidr'].PHP_EOL;
-        $cli .= "Detail: ".$info['detail'].PHP_EOL;
+        $cli = "IP: ".$info['ip'] . PHP_EOL;
+        $cli .= "AS: ".$info['as'] . PHP_EOL;
+        $cli .= "City: ".$info['city'] . PHP_EOL;
+        $cli .= "Region: ".$info['region'] . PHP_EOL;
+        $cli .= "Country: ".$info['country'] . PHP_EOL;
+        $cli .= "Timezone: ".$info['timezone'] . PHP_EOL;
+        $cli .= "Location: ".$info['loc'] . PHP_EOL;
+        $cli .= "ISP: ".$info['isp'] . PHP_EOL;
+        $cli .= "Scope: ".$info['scope'] . PHP_EOL;
+        $cli .= "Detail: ".$info['detail'] . PHP_EOL;
         return $cli;
     }
 
@@ -111,6 +111,15 @@ function getAS($rawIspInfo) { // 提取AS信息
         return 'Unknown AS';
     }
     return trim($as['0']);
+}
+
+function tryCIDR($beginIP, $endIP) {
+    $tmp = ip2long($endIP) - ip2long($beginIP) + 1;
+    if (pow(2, intval(log($tmp, 2))) == $tmp) {
+        return $beginIP . '/' . (32 - log($tmp, 2));
+    } else {
+        return $beginIP . ' - ' . $endIP;
+    }
 }
 
 ?>
