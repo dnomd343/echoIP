@@ -117,7 +117,7 @@ function ajax_process() {
         $("#isp").text(data.isp);
         $("#scope").text(data.scope);
         $("#detail").text(data.detail);
-        draw(parseFloat(data.loc.split(',')[0]), parseFloat(data.loc.split(',')[0]));
+        draw(parseFloat(data.loc.split(',')[0]), parseFloat(data.loc.split(',')[1]));
     });
     
 }
