@@ -12,6 +12,8 @@ $(document).ready(function () {
 });
 
 
+
+
 mapboxgl.accessToken = 'pk.eyJ1Ijoic2hldm9ua3VhbiIsImEiOiJja20yMjlnNDYybGg2Mm5zNW40eTNnNnUwIn0.6xj6sgjWvdQgT_7OQUy_Jg';
 
 
