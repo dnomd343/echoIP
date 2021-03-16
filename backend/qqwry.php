@@ -1,25 +1,36 @@
 <?php
 
+// 数据来源：纯真IP数据库 qqwry.dat
+// 初始化类：new QQWry($fileName)
+// 请求方式：getDetail($ip)
+// 返回格式：
+// {
+//     "beginIP": IP段起始点
+//     "endIP": IP段结束点
+//     "dataA": 国家名
+//     "dataB": 地区名
+// }
+// 
+// 请求版本：getVersion()
+// 返回格式：YYYYMMDD
+
 class QQWry {
     private $fp; // 文件指针
     private $firstRecord; // 第一条记录的偏移地址
     private $lastRecord; // 最后一条记录的偏移地址
     private $recordNum; // 总记录条数
 
-    public function __construct() { // 构造函数
-        $this->fp = 0;
-        if (($this->fp = fopen(__DIR__ . '/qqwry.dat', 'rb')) !== false) {
-            $this->firstRecord = $this->read4byte();
-            $this->lastRecord  = $this->read4byte();
-            $this->recordNum = ($this->lastRecord - $this->firstRecord) / 7; // 每条索引长度为7字节
-        }
+    public function __construct($fileName) { // 构造函数
+        $this->fp = fopen($fileName, 'rb');
+        $this->firstRecord = $this->read4byte();
+        $this->lastRecord  = $this->read4byte();
+        $this->recordNum = ($this->lastRecord - $this->firstRecord) / 7; // 每条索引长度为7字节
     }
 
     public function __destruct() { // 析构函数
         if ($this->fp) {
             fclose($this->fp);
         }
-        $this->fp = 0;
     }
 
     private function read4byte() { // 读取4字节并转为long
@@ -151,3 +162,5 @@ class QQWry {
         }
     }
 }
+
+?>
