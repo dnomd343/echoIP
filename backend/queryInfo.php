@@ -1,9 +1,10 @@
 <?php
 
-include("getInfo.php");
+// include("getInfo.php");
 include("country.php");
 include("qqwry.php");
 include("ipinfo.php");
+include("ipip.php");
 
 function getIPInfo($ip) {
     $qqwry = new QQWry('qqwry.dat');
@@ -20,6 +21,8 @@ function getIPInfo($ip) {
         $info['isp'] = $specialInfo;
     } else {
         $data = IPinfo::getInfo($ip);
+        $IPIP = new IPDB('ipipfree.ipdb');
+        $addr = $IPIP->getDistrict($ip);
         $country = getCountry($data['country']);
         $info['ip'] = $data['ip'];
         $info['as'] = $data['as'];
@@ -30,6 +33,14 @@ function getIPInfo($ip) {
         $info['timezone'] = $data['timezone'];
         $info['loc'] = $data['loc'];
         $info['isp'] = $data['isp'];
+        if ($addr[0] == '中国') {
+            $info['country'] = 'CN - China（中国）';
+            $info['timezone'] = 'Asia/Shanghai';
+            if ($addr[1] && $addr[2]) {
+                $info['region'] = $addr[1];
+                $info['city'] = $addr[2];
+            }
+        }
     }
     $info['scope'] = tryCIDR($detail['beginIP'], $detail['endIP']);
     $info['detail'] = $detail['dataA'] . $detail['dataB'];
