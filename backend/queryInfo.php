@@ -1,14 +1,12 @@
 <?php
 
-// include("getInfo.php");
 include("country.php");
 include("qqwry.php");
 include("ipinfo.php");
 include("ipip.php");
+include("city.php");
 
 function getIPInfo($ip) {
-    $qqwry = new QQWry('qqwry.dat');
-    $detail = $qqwry->getDetail($ip);
     $specialInfo = checkSpecial($ip);
     if (is_string($specialInfo)) {
         $info['ip'] = $ip;
@@ -20,9 +18,9 @@ function getIPInfo($ip) {
         $info['loc'] = null;
         $info['isp'] = $specialInfo;
     } else {
-        $data = IPinfo::getInfo($ip);
         $IPIP = new IPDB('ipipfree.ipdb');
         $addr = $IPIP->getDistrict($ip);
+        $data = IPinfo::getInfo($ip);
         $country = getCountry($data['country']);
         $info['ip'] = $data['ip'];
         $info['as'] = $data['as'];
@@ -36,14 +34,24 @@ function getIPInfo($ip) {
         if ($addr[0] == '中国') {
             $info['country'] = 'CN - China（中国）';
             $info['timezone'] = 'Asia/Shanghai';
-            if ($addr[1] && $addr[2]) {
-                $info['region'] = $addr[1];
-                $info['city'] = $addr[2];
+            if ($addr[1] == '') {
+                $addr[1] = '北京';
             }
+            $cityLoc = getLoc($addr[1], $addr[2]);
+            $info['region'] = $cityLoc['region'];
+            $info['city'] = $cityLoc['city'];
+            $info['loc'] = $cityLoc['lat'] . ',' . $cityLoc['lon'];
         }
     }
-    $info['scope'] = tryCIDR($detail['beginIP'], $detail['endIP']);
-    $info['detail'] = $detail['dataA'] . $detail['dataB'];
+    if (filter_var($ip, \FILTER_VALIDATE_IP,\FILTER_FLAG_IPV4)) {
+        $qqwry = new QQWry('qqwry.dat');
+        $detail = $qqwry->getDetail($ip);
+        $info['scope'] = tryCIDR($detail['beginIP'], $detail['endIP']);
+        $info['detail'] = $detail['dataA'] . $detail['dataB'];
+    } else {
+        $info['scope'] = $info['ip'];
+        $info['detail'] = $info['as'] . ' ' . $info['isp'];
+    }
 
     if ($_GET['cli'] == "true") { // 使用命令行模式
         $cli = "IP: ".$info['ip'] . PHP_EOL;
