@@ -10,7 +10,7 @@ shell> cd /etc/nginx/conf.d
 
 # 从代码仓库复制配置文件
 shell> cp /var/www/echoIP/conf/nginx/methodA/ip.conf ./
-shell> cp /var/www/echoIP/conf/nginx/methodB/ip-sub.func ./
+shell> cp /var/www/echoIP/conf/nginx/methodA/ip-sub.func ./
 
 # 修改配置文件，将ip.343.re改为需要部署的域名
 shell> vim ip.conf
