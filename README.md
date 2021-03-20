@@ -42,7 +42,57 @@ shell> curl ip.343.re/8.8.8.8
 
 ### Docker方式
 
-待补充...
+确定你的服务器上有Docker环境
+
+```
+shell> docker -v
+···Docker版本信息···
+```
+
+启动容器并映射端口
+
+```
+# 这里映射到宿主机1601端口，可更改
+shell> docker run -dit --name echoip -p 1601:8080 dnomd343/echoip
+```
+
+配置Nginx反向代理
+
+```
+# 进入Nginx配置目录
+shell> cd /etc/nginx/conf.d
+shell> vim ip.conf
+···
+```
+
+写入配置文件
+
+```
+server {
+    listen 80;
+    listen [::]:80;
+    server_name ip.343.re; # 
+    location / {
+        if ($http_user_agent !~* (curl|wget)) {
+            return 301 https://$server_name$request_uri;
+        }
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_pass http://127.0.0.1:1601;
+    }
+}
+
+server {
+    listen 444 ssl http2 proxy_protocol;
+    listen [::]:444 ssl http2 proxy_protocol;
+    server_name ip.343.re;
+    ssl_certificate /etc/ssl/certs/343.re/fullchain.pem;
+    ssl_certificate_key /etc/ssl/certs/343.re/privkey.pem;
+    location / {
+        proxy_set_header X-Real-IP $proxy_protocol_addr;
+        proxy_pass http://127.0.0.1:1601;
+    }
+}
+```
 
 ### 常规方式
 
@@ -56,11 +106,14 @@ Cloning into 'echoIP'...
 Unpacking objects: 100% ··· done.
 ```
 
-确定你的服务器上有PHP环境，同时有 `curl` 与 `wget` 工具
+确定你的服务器上有PHP环境、Nodejs环境，同时有 `curl` 与 `wget` 工具
 
 ```
 shell> php -v
 ···PHP版本信息···
+
+shell> node -v
+···Nodejs版本信息···
 
 shell> curl --version
 ···curl版本信息···
@@ -69,9 +122,40 @@ shell> wget --version
 ···wget版本信息···
 ```
 
+开启纯真IP库解析服务
+
+```
+shell> cd /var/www/echoIP/backend/qqwryFormat
+# 默认端口为1602，注意不要重复开启
+shell> ./start
+```
+
 配置网页服务器代理，这里提供[Nginx示例](https://github.com/dnomd343/echoIP/blob/main/conf/nginx/README.md)
 
 ## 开发资料
+
+### Docker容器
+
+制作echoIP镜像
+
+```
+shell> docker build -t echoip https://github.com/dnomd343/echoIP.git#main
+···
+```
+
+启动容器
+
+```
+shell> docker run -dit --name echoip -p 1601:8080 echoip
+···
+```
+
+进入容器调试
+
+```
+shell> docker exec -it echoip bash
+···
+```
 
 ### ipinfo.io
 
@@ -86,5 +170,7 @@ shell> wget --version
 待补充...
 
 ## 许可证
+
+> IPIP.net免费库、纯真IP库均不可商用
 
 MIT ©2021 [@dnomd343](https://github.com/dnomd343) [@ShevonKuan](https://github.com/ShevonKuan)
