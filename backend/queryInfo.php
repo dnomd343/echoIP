@@ -7,7 +7,7 @@ include("ipip.php");
 include("city.php");
 
 function getIPInfo($ip) {
-    $specialInfo = checkSpecial($ip);
+    $specialInfo = checkSpecial($ip); // 检查是否为特殊IP段
     if (is_string($specialInfo)) {
         $info['ip'] = $ip;
         $info['as'] = null;
@@ -19,9 +19,11 @@ function getIPInfo($ip) {
         $info['isp'] = $specialInfo;
     } else {
         $IPIP = new IPDB('ipipfree.ipdb');
-        $addr = $IPIP->getDistrict($ip);
-        $data = IPinfo::getInfo($ip);
-        $country = getCountry($data['country']);
+        $addr = $IPIP->getDistrict($ip); // 获取IPIP.net数据
+        $data = IPinfo::getInfo($ip); // 获取ipinfo.io数据
+        $country = getCountry($data['country']); // 解析国家2位编码
+        $qqwry = new QQWry('qqwry.dat');
+        $detail = $qqwry->getDetail($ip); // 获取纯真IP数据
         $info['ip'] = $data['ip'];
         $info['as'] = $data['as'];
         $info['city'] = $data['city'];
@@ -31,21 +33,27 @@ function getIPInfo($ip) {
         $info['timezone'] = $data['timezone'];
         $info['loc'] = $data['loc'];
         $info['isp'] = $data['isp'];
-        if ($addr[0] == '中国') {
+        if ($addr[0] == '中国' || $detail['country'] == '中国') {
             $info['country'] = 'CN - China（中国）';
             $info['timezone'] = 'Asia/Shanghai';
-            if ($addr[1] == '') {
-                $addr[1] = '北京';
+            $flagErr = false;
+            if ($addr[1] == '' || $addr[2] == '') {
+                if ($detail['region'] != '' && $detail['city'] != '') {
+                    $addr[1] = $detail['region']; // 修正IPIP.net数据
+                    $addr[2] = $detail['city'];
+                } else {
+                    $flagErr = true; // 国内数据不全
+                }
             }
-            $cityLoc = getLoc($addr[1], $addr[2]);
-            $info['region'] = $cityLoc['region'];
-            $info['city'] = $cityLoc['city'];
-            $info['loc'] = $cityLoc['lat'] . ',' . $cityLoc['lon'];
+            if (!$flagErr) { // 国内数据可用
+                $cityLoc = getLoc($addr[1], $addr[2]); // 获取城市经纬度
+                $info['region'] = $cityLoc['region'];
+                $info['city'] = $cityLoc['city'];
+                $info['loc'] = $cityLoc['lat'] . ',' . $cityLoc['lon'];
+            }
         }
     }
-    if (filter_var($ip, \FILTER_VALIDATE_IP,\FILTER_FLAG_IPV4)) {
-        $qqwry = new QQWry('qqwry.dat');
-        $detail = $qqwry->getDetail($ip);
+    if (filter_var($ip, \FILTER_VALIDATE_IP,\FILTER_FLAG_IPV4)) { // 录入纯真库数据
         $info['scope'] = tryCIDR($detail['beginIP'], $detail['endIP']);
         $info['detail'] = $detail['dataA'] . $detail['dataB'];
     } else {
@@ -107,7 +115,7 @@ function tryCIDR($beginIP, $endIP) { // 给定IP范围，尝试计算CIDR
 
 function main() {
     $ip = $_GET['ip'];
-    if (!filter_var($ip, \FILTER_VALIDATE_IP)) {
+    if (!filter_var($ip, \FILTER_VALIDATE_IP)) { // 输入IP不合法
         echo "Illegal IP format".PHP_EOL;
         exit;
     }

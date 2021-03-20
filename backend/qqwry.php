@@ -7,8 +7,13 @@
 // {
 //     "beginIP": IP段起始点
 //     "endIP": IP段结束点
-//     "dataA": 国家名
-//     "dataB": 地区名
+//     "dataA": 数据段1
+//     "dataB": 数据段2
+//     "country": 国家
+//     "region": 行政区
+//     "city": 城市
+//     "domain": 所有者域名
+//     "isp": ISP信息
 // }
 // 
 // 请求版本：getVersion()
@@ -19,6 +24,7 @@ class QQWry {
     private $firstRecord; // 第一条记录的偏移地址
     private $lastRecord; // 最后一条记录的偏移地址
     private $recordNum; // 总记录条数
+    private $formatPort = '1602'; // 数据格式化分析接口
 
     public function __construct($fileName) { // 构造函数
         $this->fp = fopen($fileName, 'rb');
@@ -92,6 +98,16 @@ class QQWry {
         if ($detail['dataB'] == ' CZ88.NET') {
             $detail['dataB'] = '';
         }
+        $rawData = $this->formatData($detail['dataA'], $detail['dataB']);
+        if ($rawData['dataA'] != '' && $rawData['dataB'] != '') {
+            $detail['dataA'] = $rawData['dataA'];
+            $detail['dataB'] = $rawData['dataB'];
+        }
+        $detail['country'] = $rawData['country'];
+        $detail['region'] = $rawData['region'];
+        $detail['city'] = $rawData['city'];
+        $detail['domain'] = $rawData['domain'];
+        $detail['isp'] = $rawData['isp'];
         return $detail;
     }
 
@@ -160,6 +176,11 @@ class QQWry {
             fseek($this->fp, -1, SEEK_CUR); // 文件指针回退1字节
             return $this->readString();
         }
+    }
+
+    private function formatData($dataA, $dataB) { // 从数据中提取国家、地区、城市、运营商等信息
+        $str_json = file_get_contents('http://127.0.0.1:' . $this->formatPort . '/?dataA=' . urlencode($dataA) . '&dataB=' . urlencode($dataB));
+        return json_decode($str_json, true); // 格式化为JSON
     }
 }
 
