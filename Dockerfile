@@ -6,6 +6,7 @@ RUN mkdir -p /var/www/echoIP \
     && apt update \
     && apt install -y nginx curl \
     && apt install -y php7.3 php7.3-fpm php7.3-sqlite3 \
+    && apt install -y nodejs \
     && apt clean \
     && cp /var/www/echoIP/conf/nginx/docker/ip.conf /etc/nginx/conf.d \
     && chmod +x /init.sh
