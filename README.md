@@ -2,7 +2,7 @@
 
 > 显示客户端IP、查询IP详细信息
 
-结合 [ipinfo.io](https://ipinfo.io/)、[IPIP.net](https://www.ipip.net/)、[纯真IP](http://www.cz88.net/) 的数据计算指定IP信息，支持IPv4与IPv6地址。
+结合 [ipinfo.io](https://ipinfo.io/)、[IPIP.net](https://www.ipip.net/)、[纯真IP](http://www.cz88.net/) 的数据获取IP地址的信息，支持IPv4与IPv6地址。
 
 客户端可直接向服务器询问自己的IP地址，同时可指定任意IP地址获取其详细信息。
 
@@ -52,8 +52,15 @@ shell> docker -v
 启动容器并映射端口
 
 ```
-# 这里映射到宿主机1601端口，可更改
+# 映射容器服务到宿主机1601端口
 shell> docker run -dit --name echoip -p 1601:8080 dnomd343/echoip
+```
+
+测试容器是否正常工作
+
+```
+shell> curl 127.0.0.1:1601/8.8.8.8
+···8.8.8.8的详细信息···
 ```
 
 配置Nginx反向代理
@@ -71,7 +78,7 @@ shell> vim ip.conf
 server {
     listen 80;
     listen [::]:80;
-    server_name ip.343.re; # 
+    server_name ip.343.re; # 改为自己的域名
     location / {
         if ($http_user_agent !~* (curl|wget)) {
             return 301 https://$server_name$request_uri;
@@ -82,16 +89,22 @@ server {
 }
 
 server {
-    listen 444 ssl http2 proxy_protocol;
-    listen [::]:444 ssl http2 proxy_protocol;
-    server_name ip.343.re;
-    ssl_certificate /etc/ssl/certs/343.re/fullchain.pem;
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name ip.343.re; # 改为自己的域名
+    ssl_certificate /etc/ssl/certs/343.re/fullchain.pem; # 改为自己的证书
     ssl_certificate_key /etc/ssl/certs/343.re/privkey.pem;
     location / {
-        proxy_set_header X-Real-IP $proxy_protocol_addr;
+        proxy_set_header X-Real-IP $remote_addr;
         proxy_pass http://127.0.0.1:1601;
     }
 }
+```
+
+重启Nginx服务
+
+```
+shell> nginx -s reload
 ```
 
 ### 常规方式
@@ -127,10 +140,28 @@ shell> wget --version
 ```
 shell> cd /var/www/echoIP/backend/qqwryFormat
 # 默认端口为1602，注意不要重复开启
-shell> ./start
+shell> ./start.sh
 ```
 
-配置网页服务器代理，这里提供[Nginx示例](https://github.com/dnomd343/echoIP/blob/main/conf/nginx/README.md)
+配置网页服务器代理，需要额外占用除80与443之外的一个端口，默认为TCP/1601，可按需修改
+
+```
+# 进入nginx配置目录
+shell> cd /etc/nginx/conf.d
+
+# 从代码仓库复制配置文件
+shell> cp /var/www/echoIP/conf/nginx/ip.conf ./
+
+# 修改配置文件，将ip.343.re改为需要部署的域名
+shell> vim ip.conf
+···
+```
+
+重启Nginx服务
+
+```
+shell> nginx -s reload
+```
 
 ## 开发资料
 
@@ -140,21 +171,18 @@ shell> ./start
 
 ```
 shell> docker build -t echoip https://github.com/dnomd343/echoIP.git#main
-···
 ```
 
 启动容器
 
 ```
 shell> docker run -dit --name echoip -p 1601:8080 echoip
-···
 ```
 
 进入容器调试
 
 ```
 shell> docker exec -it echoip bash
-···
 ```
 
 ### ipinfo.io

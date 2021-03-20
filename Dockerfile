@@ -8,6 +8,6 @@ RUN mkdir -p /var/www/echoIP \
     && apt install -y php7.3 php7.3-fpm php7.3-sqlite3 \
     && apt install -y nodejs \
     && apt clean \
-    && cp /var/www/echoIP/conf/nginx/docker/ip.conf /etc/nginx/conf.d \
+    && cp /var/www/echoIP/conf/nginx/docker.conf /etc/nginx/conf.d \
     && chmod +x /init.sh
 CMD ["sh","init.sh"]
