@@ -1,21 +1,39 @@
-$(document).ready(function () {
-    $.get("/ip", function (data) {
+$(document).ready(function() {
+    $.get("/ip", function(data) {
         $("#ip_default").val(data);
-        ajax_process();
+        getInfo();
     });
     $("table").hide();
-    $("button").click(function () {
+    $("button").click(function() {
         $("button").text("Searching...");
-        $("table").hide();
-        ajax_process();
+        $("table").hide(1000);
+        getInfo();
     });
 });
 
-
-
+function getInfo() {
+    $.get("/info/" + $("input").val(), function(data) {
+        console.log(data);
+        if (!$("input").val()) {
+            $("input").val(data.ip);
+        }
+        $("button").text("Search");
+        $("table").show(1000);
+        $("#ip").text(data.ip);
+        $("#as").text(data.as);
+        $("#city").text(data.city);
+        $("#region").text(data.region);
+        $("#country").text(data.country);
+        $("#timezone").text(data.timezone);
+        $("#loc").text(data.loc);
+        $("#isp").text(data.isp);
+        $("#scope").text(data.scope);
+        $("#detail").text(data.detail);
+        draw(parseFloat(data.loc.split(',')[0]), parseFloat(data.loc.split(',')[1]));
+    });
+}
 
 mapboxgl.accessToken = 'pk.eyJ1Ijoic2hldm9ua3VhbiIsImEiOiJja20yMjlnNDYybGg2Mm5zNW40eTNnNnUwIn0.6xj6sgjWvdQgT_7OQUy_Jg';
-
 
 function draw(x, y) {
     var map = new mapboxgl.Map({
@@ -75,9 +93,7 @@ function draw(x, y) {
     };
 
     map.on('load', function () {
-
         map.addImage('pulsing-dot', pulsingDot, { pixelRatio: 2 });
-
         map.addLayer({
             "id": "points",
             "type": "symbol",
@@ -100,24 +116,3 @@ function draw(x, y) {
         });
     });
 };
-
-
-function ajax_process() {
-    $.get("/info/" + $("input").val(), function (data) {
-        console.log(data);
-        $("button").text("Search");
-        $("table").show();
-        $("#ip").text(data.ip);
-        $("#as").text(data.as);
-        $("#city").text(data.city);
-        $("#region").text(data.region);
-        $("#country").text(data.country);
-        $("#timezone").text(data.timezone);
-        $("#loc").text(data.loc);
-        $("#isp").text(data.isp);
-        $("#scope").text(data.scope);
-        $("#detail").text(data.detail);
-        draw(parseFloat(data.loc.split(',')[0]), parseFloat(data.loc.split(',')[1]));
-    });
-    
-}
