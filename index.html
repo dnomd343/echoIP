@@ -32,86 +32,102 @@
         margin-top: 0px;
         margin-bottom: 20px;
     }
+
+    .positioncontrol {
+        position: absolute;
+        left: calc(100vw*0.8 - 190px);
+    }
+
+    @media screen and (max-width: 600px) {
+        .positioncontrol {
+            position: absolute;
+            left: 0;
+            right: 0;
+        }
+    }
+
+    a {
+        text-decoration: none;
+    }
 </style>
 
 <body>
     <div class="hero is-fullheight is-app-grey mapbox-hero">
         <div id="main-hero" class="hero-body" style="padding: 0;">
-            <div class="container has-text-centered">
-                <div class="columns is-vcentered">
-                    <div class="column is-6 is-offset-6 has-text-centered is-subheader-caption">
-                        <div class="contact-page-form flex-card">
-                            <h3 id="sub-title">echoIP</h3>
-                            <div class="columns is-multiline">
-                                <div class="column is-6">
-                                    <div class="field">
-                                        <div class="control">
-                                            <input type="text" placeholder="Search your IP here." class="input is-medium">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="column is-6">
-                                    <div class="field">
-                                        <div class="control">
-                                            <button type="button"
-                                                class="button button-cta primary-btn no-lh is-bold raised is-fullwidth">Search</button>
-                                        </div>
-                                    </div>
+            <div class="has-text-centered is-subheader-caption positioncontrol" style="padding-bottom: 0;">
+                <div class="contact-page-form flex-card"
+                    style="background-color: rgba(255, 255, 255, 0.7);backdrop-filter: blur(1.5px);">
+                    <h3 id="sub-title">echoIP</h3>
+                    <div class="columns is-multiline">
+                        <div class="column">
+                            <div class="field">
+                                <div class="control">
+                                    <input type="text" placeholder="Search your IP here." class="input is-medium"
+                                        style="background-color: rgba(255, 255, 255, 0.5);">
                                 </div>
                             </div>
-                            <table class="table">
-                                <tr>
-                                    <td>IP</th>
-                                    <td id="ip">
-                                        </th>
-                                </tr>
-                                <tr>
-                                    <td>AS</th>
-                                    <td id="as">
-                                        </th>
-                                </tr>
-                                <tr>
-                                    <td>City</th>
-                                    <td id="city">
-                                        </th>
-                                </tr>
-                                <tr>
-                                    <td>Region</th>
-                                    <td id="region">
-                                        </th>
-                                </tr>
-                                <tr>
-                                    <td>Country</th>
-                                    <td id="country">
-                                        </th>
-                                </tr>
-                                <tr>
-                                    <td>Timezone</th>
-                                    <td id="timezone">
-                                        </th>
-                                </tr>
-                                <tr>
-                                    <td>Location</th>
-                                    <td id="loc">
-                                        </th>
-                                </tr>
-                                <tr>
-                                    <td>ISP</td>
-                                    <td id="isp"></td>
-                                </tr>
-                                <tr>
-                                    <td>Scope</td>
-                                    <td id="scope"></td>
-                                </tr>
-                                <tr>
-                                    <td>Detail</td>
-                                    <td id="detail"></td>
-                                </tr>
-                            </table>
+                        </div>
+                        <div class="column">
+                            <div class="field">
+                                <div class="control">
+                                    <button type="button"
+                                        class="button button-cta primary-btn no-lh is-bold raised is-fullwidth">Search</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
+                    <table class="table" style="background-color: transparent;">
+                        <tr>
+                            <td>IP</th>
+                            <td id="ip">
+                                </th>
+                        </tr>
+                        <tr>
+                            <td>AS</th>
+                            <td id="as">
+                                </th>
+                        </tr>
+                        <tr>
+                            <td>City</th>
+                            <td id="city">
+                                </th>
+                        </tr>
+                        <tr>
+                            <td>Region</th>
+                            <td id="region">
+                                </th>
+                        </tr>
+                        <tr>
+                            <td>Country</th>
+                            <td id="country">
+                                </th>
+                        </tr>
+                        <tr>
+                            <td>Timezone</th>
+                            <td id="timezone">
+                                </th>
+                        </tr>
+                        <tr>
+                            <td>Location</th>
+                            <td id="loc">
+                                </th>
+                        </tr>
+                        <tr>
+                            <td>ISP</td>
+                            <td id="isp"></td>
+                        </tr>
+                        <tr>
+                            <td>Scope</td>
+                            <td id="scope"></td>
+                        </tr>
+                        <tr>
+                            <td>Detail</td>
+                            <td id="detail"></td>
+                        </tr>
+                    </table>
                 </div>
             </div>
+
             <div id='map'></div>
         </div>
     </div>

@@ -74,7 +74,8 @@ function getIPInfo($ip) {
         $cli .= "Detail: ".$info['detail'] . PHP_EOL;
         return $cli;
     }
-
+    
+    $info['status'] = 'T';
     header('Content-Type: application/json; charset=utf-8'); // 以JSON格式发送
     return json_encode($info);
 }
@@ -116,12 +117,18 @@ function tryCIDR($beginIP, $endIP) { // 给定IP范围，尝试计算CIDR
 function main() {
     $ip = $_GET['ip'];
     if (!filter_var($ip, \FILTER_VALIDATE_IP)) { // 输入IP不合法
-        echo "Illegal IP format".PHP_EOL;
+        if ($_GET['cli'] == "true") {
+            echo "Illegal IP format" . PHP_EOL;
+        } else {
+            header('Content-Type: application/json; charset=utf-8');
+            $reply = array();
+            $reply['status'] = 'F';
+            $reply['message'] = 'Illegal IP format';
+            echo json_encode($reply);
+        }
         exit;
     }
     echo getIPInfo($ip);
 }
 
 main();
-
-?>

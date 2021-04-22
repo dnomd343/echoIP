@@ -1,23 +1,32 @@
-$(document).ready(function() {
-    $.get("/ip", function(data) {
+$(document).ready(function () {
+    $.get("/ip", function (data) {
         $("#ip_default").val(data);
         getInfo();
     });
     $("table").hide();
-    $("button").click(function() {
+    $("button").click(function () {
         $("button").text("Searching...");
         $("table").hide(1000);
         getInfo();
     });
 });
-
+$(document).keydown(function (event) {
+    if (event.keyCode == 13) {
+        $("button").click();
+    }
+});
 function getInfo() {
-    $.get("/info/" + $("input").val(), function(data) {
-        console.log(data);
+    $.get("/info/" + $("input").val(), function (data) {
+        if (data.status == "F") {
+            $("button").text("Illegal IP");
+            $("button").css({ 'border-color': '#ff406f', 'background-color': '#ff406f' });
+            return 0;
+        }
         if (!$("input").val()) {
             $("input").val(data.ip);
         }
         $("button").text("Search");
+        $("button").css({ 'border-color': '', 'background-color': '' });
         $("table").show(1000);
         $("#ip").text(data.ip);
         $("#as").text(data.as);
@@ -25,11 +34,14 @@ function getInfo() {
         $("#region").text(data.region);
         $("#country").text(data.country);
         $("#timezone").text(data.timezone);
-        $("#loc").text(data.loc);
+        var earth = "https://earth.google.com/web/@" + data.loc + ",0a,398836d,1y,0h,0t,0r";
+        $("#loc").html('<a  href=' + earth + 'target="_blank">' + data.loc + '</a>');
         $("#isp").text(data.isp);
         $("#scope").text(data.scope);
         $("#detail").text(data.detail);
         draw(parseFloat(data.loc.split(',')[0]), parseFloat(data.loc.split(',')[1]));
+
+
     });
 }
 
