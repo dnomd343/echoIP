@@ -1,8 +1,10 @@
 $(document).ready(function() {
-    $.get("/ip", function(data) {
-        $("#ip_default").val(data);
+    if (getQuery("ip") === null) {
         getInfo();
-    });
+    } else {
+        $("input").val(getQuery("ip"));
+        getInfo();
+    }
     $("table").hide();
     $("button").click(function() {
         $("button").css({
@@ -44,7 +46,7 @@ function getInfo() {
         $("#country").text(data.country);
         $("#timezone").text(data.timezone);
         var earthUri = "https://earth.google.com/web/@" + data.loc + ",0a,398836d,1y,0h,0t,0r";
-        $("#loc").html('<a href="' + earthUri + '" target="_blank" title="On Google Earth">' + data.loc + '</a>');
+        $("#loc").html('<a id="loc" href="' + earthUri + '" target="_blank" title="On Google Earth">' + data.loc + '</a>');
         $("#isp").text(data.isp);
         $("#scope").text(data.scope);
         $("#detail").text(data.detail);
@@ -72,6 +74,16 @@ function checkIP(ipStr) {
         return "error";
     } else {
         return "ok";
+    }
+}
+
+function getQuery(name) {
+    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+    var result = window.location.search.substr(1).match(reg);
+    if (result != null) {
+        return unescape(result[2]);
+    } else {
+        return null;
     }
 }
 
