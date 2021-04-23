@@ -34,11 +34,11 @@ shell> curl ip.343.re/8.8.8.8
 
 你可以直接在 [ip.343.re](https://ip.343.re/) 进行查询，或者将项目部署到自己的服务器上。
 
-![echoIP-web](https://pic.dnomd343.top/images/k2H.png)
+![echoIP-web](https://pic.dnomd343.top/images/Wg7.png)
 
 ## 如何部署
 
-> 若你想用自己的域名建立一个类似的服务，可按如下方式部署
+> 如果想在自己域名下建立本服务，可按如下方式部署
 
 ### Docker方式
 
@@ -187,18 +187,35 @@ shell> docker exec -it echoip bash
 
 ### ipinfo.io
 
-待补充...
+在线请求，格式为 `https://ipinfo.io/$IP/json`，返回指定IP对应的信息，形如：
+
+```
+{
+  "ip": "47.242.30.65",
+  "city": "Kowloon",
+  "region": "Kowloon City",
+  "country": "HK",
+  "loc": "22.3167,114.1833",
+  "org": "AS45102 Alibaba (US) Technology Co., Ltd.",
+  "timezone": "Asia/Hong_Kong",
+  "readme": "https://ipinfo.io/missingauth"
+}
+```
+
+查询代码位于 `backend/ipinfo.php`
 
 ### IPIP.net
 
-待补充...
+离线数据库，在 [官网](https://www.ipip.net/product/ip.html) 登录后即可下载，国内可精确到市，格式为ipdb，数据不定期更新。
+
+数据库文件位于 `backend/ipipfree.ipdb`， 查询代码位于 `backend/ipip.php`
 
 ### 纯真IP库
 
-待补充...
+离线数据库，获取方式及解码原理可以参考[这篇](https://blog.dnomd343.top/qqwry.dat-analyse/)博客，国内定位精度较高，数据每5天更新一次。
+
+数据库文件位于 `backend/qqwry.dat`，数据库更新脚本位于 `backend/qqwryUpdate.sh`，查询代码位于 `backend/qqwry.php`，数据解析服务位于 `backend/qqwryFormat/*`
 
 ## 许可证
-
-> IPIP.net免费库、纯真IP库均不可商用
 
 MIT ©2021 [@dnomd343](https://github.com/dnomd343) [@ShevonKuan](https://github.com/ShevonKuan)
