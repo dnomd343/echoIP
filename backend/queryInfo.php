@@ -8,7 +8,7 @@ include("city.php");
 
 function getIPInfo($ip) {
     $specialInfo = checkSpecial($ip); // 检查是否为特殊IP段
-    if (is_string($specialInfo)) {
+    if (isset($specialInfo)) {
         $info['ip'] = $ip;
         $info['as'] = null;
         $info['city'] = null;
@@ -16,7 +16,9 @@ function getIPInfo($ip) {
         $info['country'] = null;
         $info['timezone'] = null;
         $info['loc'] = null;
-        $info['isp'] = $specialInfo;
+        $info['isp'] = $specialInfo['en'];
+        $info['scope'] = null;
+        $info['detail'] = $specialInfo['cn'];
     } else {
         $IPIP = new IPDB('ipipfree.ipdb');
         $addr = $IPIP->getDistrict($ip); // 获取IPIP.net数据
@@ -28,8 +30,10 @@ function getIPInfo($ip) {
         $info['as'] = $data['as'];
         $info['city'] = $data['city'];
         $info['region'] = $data['region'];
-        $info['country'] = $data['country'] . ' - ' . $country['en'];
-        $info['country'] .= "（" . $country['cn'] . "）";
+        if (isset($data['country'])) {
+            $info['country'] = $data['country'] . ' - ' . $country['en'];
+            $info['country'] .= "（" . $country['cn'] . "）";
+        }
         $info['timezone'] = $data['timezone'];
         $info['loc'] = $data['loc'];
         $info['isp'] = $data['isp'];
@@ -52,13 +56,13 @@ function getIPInfo($ip) {
                 $info['loc'] = $cityLoc['lat'] . ',' . $cityLoc['lon'];
             }
         }
-    }
-    if (filter_var($ip, \FILTER_VALIDATE_IP,\FILTER_FLAG_IPV4)) { // 录入纯真库数据
-        $info['scope'] = tryCIDR($detail['beginIP'], $detail['endIP']);
-        $info['detail'] = $detail['dataA'] . $detail['dataB'];
-    } else {
-        $info['scope'] = $info['ip'];
-        $info['detail'] = $info['as'] . ' ' . $info['isp'];
+        if (filter_var($ip, \FILTER_VALIDATE_IP,\FILTER_FLAG_IPV4)) { // 录入纯真库数据
+            $info['scope'] = tryCIDR($detail['beginIP'], $detail['endIP']);
+            $info['detail'] = $detail['dataA'] . $detail['dataB'];
+        } else {
+            $info['scope'] = $info['ip'];
+            $info['detail'] = $info['as'] . ' ' . $info['isp'];
+        }
     }
 
     if ($_GET['cli'] == "true") { // 使用命令行模式
@@ -82,27 +86,34 @@ function getIPInfo($ip) {
 
 function checkSpecial($ip) { // 检查特殊IP地址并返回说明
     if ('::1' === $ip) {
-        return 'localhost IPv6 access';
+        $info['en'] = 'localhost IPv6 access';
+        $info['cn'] = '本地IPv6地址';
     }
     if (stripos($ip, 'fe80:') === 0) {
-        return 'link-local IPv6 access';
+        $info['en'] = 'link-local IPv6 access';
+        $info['cn'] = '链路本地IPv6地址';
     }
     if (strpos($ip, '127.') === 0) {
-        return 'localhost IPv4 access';
+        $info['en'] = 'localhost IPv4 access';
+        $info['cn'] = '本地IPv4地址';
     }
     if (strpos($ip, '10.') === 0) {
-        return 'private IPv4 access';
+        $info['en'] = 'private IPv4 access';
+        $info['cn'] = '私有IPv4地址';
     }
     if (preg_match('/^172\.(1[6-9]|2\d|3[01])\./', $ip) === 1) {
-        return 'private IPv4 access';
+        $info['en'] = 'private IPv4 access';
+        $info['cn'] = '私有IPv4地址';
     }
     if (strpos($ip, '192.168.') === 0) {
-        return 'private IPv4 access';
+        $info['en'] = 'private IPv4 access';
+        $info['cn'] = '私有IPv4地址';
     }
     if (strpos($ip, '169.254.') === 0) {
-        return 'link-local IPv4 access';
+        $info['en'] = 'link-local IPv4 access';
+        $info['cn'] = '链路本地IPv4地址';
     }
-    return null;
+    return isset($info) ? $info : null;
 }
 
 function tryCIDR($beginIP, $endIP) { // 给定IP范围，尝试计算CIDR
@@ -120,10 +131,10 @@ function main() {
         if ($_GET['cli'] == "true") {
             echo "Illegal IP format" . PHP_EOL;
         } else {
-            header('Content-Type: application/json; charset=utf-8');
             $reply = array();
             $reply['status'] = 'F';
             $reply['message'] = 'Illegal IP format';
+            header('Content-Type: application/json; charset=utf-8');
             echo json_encode($reply);
         }
         exit;

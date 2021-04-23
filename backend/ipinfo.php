@@ -47,7 +47,7 @@ class IPinfo {
             || !is_string($rawInfo['org'])
             || empty($rawInfo['org'])
         ) {
-            return 'Unknown ISP';
+            return null;
         }
         return preg_replace('/AS\\d+\\s/', '', $rawInfo['org']);
     }
@@ -59,10 +59,10 @@ class IPinfo {
             || !is_string($rawInfo['org'])
             || empty($rawInfo['org'])
         ) {
-            return 'Unknown AS';
+            return null;
         }
         if (preg_match('/AS\\d+\\s/', $rawInfo['org'], $as) !== 1) {
-            return 'Unknown AS';
+            return null;
         }
         return trim($as['0']);
     }
