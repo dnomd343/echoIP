@@ -163,6 +163,39 @@ shell> vim ip.conf
 shell> nginx -s reload
 ```
 
+### 特殊情况
+
+在一些情况下，可能Nginx无法直接监听80与443端口，而是通过前置服务转发到指定端口，这种情况下配置文件需要稍加改动，同时前置服务器应开启 `Proxy Protocol` 支持。
+
+```
+# http流量转发到TCP/81端口
+server {
+    listen 81 proxy_protocol;
+    listen [::]:81 proxy_protocol;
+    server_name ip.343.re; # 改为自己的域名
+    location / {
+        if ($http_user_agent !~* (curl|wget)) {
+            return 301 https://$server_name$request_uri;
+        }
+        proxy_set_header X-Real-IP $proxy_protocol_addr;
+        proxy_pass http://127.0.0.1:1601;
+    }
+}
+
+# https流量转发到TCP/444端口
+server {
+    listen 444 ssl http2 proxy_protocol;
+    listen [::]:444 ssl http2 proxy_protocol;
+    server_name ip.343.re; # 改为自己的域名
+    ssl_certificate /etc/ssl/certs/343.re/fullchain.pem; # 改为自己的证书
+    ssl_certificate_key /etc/ssl/certs/343.re/privkey.pem;
+    location / {
+        proxy_set_header X-Real-IP $proxy_protocol_addr;
+        proxy_pass http://127.0.0.1:1601;
+    }
+}
+```
+
 ## 开发资料
 
 ### Docker容器
@@ -170,7 +203,7 @@ shell> nginx -s reload
 制作echoIP镜像
 
 ```
-shell> docker build -t echoip https://github.com/dnomd343/echoIP.git#main
+shell> docker build -t echoip https://github.com/dnomd343/echoIP.git#master
 ```
 
 启动容器
@@ -206,7 +239,7 @@ shell> docker exec -it echoip bash
 
 ### IPIP.net
 
-离线数据库，在 [官网](https://www.ipip.net/product/ip.html) 登录后即可下载，国内可精确到市，格式为ipdb，数据不定期更新。
+离线数据库，在[官网](https://www.ipip.net/product/ip.html)登录后即可下载，国内可精确到市，格式为ipdb，数据不定期更新。
 
 数据库文件位于 `backend/ipipfree.ipdb`， 查询代码位于 `backend/ipip.php`
 

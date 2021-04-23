@@ -126,9 +126,20 @@ function tryCIDR($beginIP, $endIP) { // 给定IP范围，尝试计算CIDR
 }
 
 function main() {
-    $ip = $_GET['ip'];
+    $ip = isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR']; // 获取客户端IP
+    if ($_GET['justip'] == "true") { // 仅查询IP地址
+        if ($_GET['cli'] == "true") { // 命令行模式
+            echo $ip . PHP_EOL;
+        } else {
+            header('Content-Type: application/json; charset=utf-8');
+            echo '{"ip":"' . $ip . '"}'; // 返回JSON数据
+        }
+        exit;
+    }
+    $ip = isset($_GET['ip']) ? $_GET['ip'] : $ip; // 若存在请求信息则查询该IP
+
     if (!filter_var($ip, \FILTER_VALIDATE_IP)) { // 输入IP不合法
-        if ($_GET['cli'] == "true") {
+        if ($_GET['cli'] == "true") { // 命令行模式
             echo "Illegal IP format" . PHP_EOL;
         } else {
             $reply = array();
