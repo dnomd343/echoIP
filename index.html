@@ -4,13 +4,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="shortcut icon" href="./assets/favicon.png">
+    <link rel="shortcut icon" href="./assets/img/favicon.png">
     <title>Dnomd343 - IP</title>
 </head>
 
 <script src="https://cdn.staticfile.org/jquery/1.11.0/jquery.min.js"></script>
-<script src='https://api.tiles.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.js'></script>
-<link href='https://api.tiles.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.css' rel='stylesheet' />
+<!-- <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.js'></script> -->
+<!-- <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.css' rel='stylesheet' /> -->
+
+<script src='assets/mapbox/mapbox-gl.js'></script>
+<link href='assets/mapbox/mapbox-gl.min.css' rel='stylesheet' />
 <link href="assets/css/main.min.css" rel="stylesheet" />
 <script src="assets/js/main.min.js"></script>
 
@@ -19,7 +22,17 @@
         margin: 0;
         padding: 0;
     }
-
+    
+    a {
+        text-decoration: none;
+        color: #363636;
+        transition: all 0.6s;
+    }
+    
+    a:hover {
+        color: #3391ff;
+    }
+    
     #map {
         position: absolute;
         top: 0;
@@ -28,16 +41,31 @@
         z-index: -1090;
     }
 
+    .mapboxgl-ctrl {
+        display: none !important;
+    }
+    
     #sub-title {
         margin-top: 0px;
         margin-bottom: 20px;
     }
-
+    
+    #sub-title,
+    a {
+        color: #555;
+        transition: all 0.6s;
+    }
+    
+    #sub-title,
+    a:hover {
+        color: #5165db;
+    }
+    
     .positioncontrol {
         position: absolute;
         left: calc(100vw*0.8 - 190px);
     }
-
+    
     @media screen and (max-width: 600px) {
         .positioncontrol {
             position: absolute;
@@ -45,72 +73,60 @@
             right: 0;
         }
     }
-
-    a {
-        text-decoration: none;
-    }
 </style>
 
 <body>
     <div class="hero is-fullheight is-app-grey mapbox-hero">
         <div id="main-hero" class="hero-body" style="padding: 0;">
             <div class="has-text-centered is-subheader-caption positioncontrol" style="padding-bottom: 0;">
-                <div class="contact-page-form flex-card"
-                    style="background-color: rgba(255, 255, 255, 0.7);backdrop-filter: blur(1.5px);">
-                    <h3 id="sub-title">echoIP</h3>
+                <div class="contact-page-form flex-card" style="background-color: rgba(255, 255, 255, 0.75); backdrop-filter: blur(1.5px);">
+                    <h3 id="sub-title">
+                        <a href="https://github.com/dnomd343/echoIP" target="_blank" title="View the source code on Github">echoIP</a>
+                    </h3>
                     <div class="columns is-multiline">
                         <div class="column">
                             <div class="field">
                                 <div class="control">
-                                    <input type="text" placeholder="Search your IP here." class="input is-medium"
-                                        style="background-color: rgba(255, 255, 255, 0.5);">
+                                    <input type="text" placeholder="Search IP here" class="input is-medium" style="background-color: rgba(255, 255, 255, 0.5);">
                                 </div>
                             </div>
                         </div>
                         <div class="column">
                             <div class="field">
                                 <div class="control">
-                                    <button type="button"
-                                        class="button button-cta primary-btn no-lh is-bold raised is-fullwidth">Search</button>
+                                    <button type="button" class="button button-cta primary-btn no-lh is-bold raised is-fullwidth">Search</button>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <table class="table" style="background-color: transparent;">
                         <tr>
-                            <td>IP</th>
-                            <td id="ip">
-                                </th>
+                            <td>IP</td>
+                            <td id="ip"></td>
                         </tr>
                         <tr>
-                            <td>AS</th>
-                            <td id="as">
-                                </th>
+                            <td>AS</td>
+                            <td id="as"></td>
                         </tr>
                         <tr>
-                            <td>City</th>
-                            <td id="city">
-                                </th>
+                            <td>City</td>
+                            <td id="city"></td>
                         </tr>
                         <tr>
-                            <td>Region</th>
-                            <td id="region">
-                                </th>
+                            <td>Region</td>
+                            <td id="region"></td>
                         </tr>
                         <tr>
-                            <td>Country</th>
-                            <td id="country">
-                                </th>
+                            <td>Country</td>
+                            <td id="country"></td>
                         </tr>
                         <tr>
-                            <td>Timezone</th>
-                            <td id="timezone">
-                                </th>
+                            <td>Timezone</td>
+                            <td id="timezone"></td>
                         </tr>
                         <tr>
-                            <td>Location</th>
-                            <td id="loc">
-                                </th>
+                            <td>Location</td>
+                            <td id="loc"></td>
                         </tr>
                         <tr>
                             <td>ISP</td>
@@ -127,7 +143,6 @@
                     </table>
                 </div>
             </div>
-
             <div id='map'></div>
         </div>
     </div>
