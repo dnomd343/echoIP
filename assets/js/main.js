@@ -13,6 +13,7 @@ $(document).ready(function() {
         });
         $("button").text("Searching...");
         $("table").hide(1000);
+        $("input").val(trim($("input").val()));
         if (checkIP($("input").val()) == "ok") {
             getInfo();
         } else {
@@ -23,7 +24,7 @@ $(document).ready(function() {
 
 $(document).keydown(function(event) {
     if (event.keyCode == 13) {
-        $("button").click();
+        $("button").focus();
     }
 });
 
@@ -40,18 +41,35 @@ function getInfo() {
         $("button").text("Search");
         $("table").show(1000);
         $("#ip").text(data.ip);
+        data.as = (data.as == null) ? "Unknow" : data.as;
+        data.city = (data.city == null) ? "Unknow" : data.city;
+        data.region = (data.region == null) ? "Unknow" : data.region;
+        data.country = (data.country == null) ? "Unknow" : data.country;
+        data.timezone = (data.timezone == null) ? "Unknow" : data.timezone;
+        data.isp = (data.isp == null) ? "Unknow" : data.isp;
+        data.scope = (data.scope == null) ? "Unknow" : data.scope;
+        data.detail = (data.detail == null || data.detail == ' ') ? "Unknow" : data.detail;
         $("#as").text(data.as);
         $("#city").text(data.city);
         $("#region").text(data.region);
         $("#country").text(data.country);
         $("#timezone").text(data.timezone);
-        var earthUri = "https://earth.google.com/web/@" + data.loc + ",0a,398836d,1y,0h,0t,0r";
-        $("#loc").html('<a id="loc" href="' + earthUri + '" target="_blank" title="On Google Earth">' + data.loc + '</a>');
         $("#isp").text(data.isp);
         $("#scope").text(data.scope);
         $("#detail").text(data.detail);
-        draw(parseFloat(data.loc.split(',')[0]), parseFloat(data.loc.split(',')[1]));
+        if (data.loc == null) {
+            $("#loc").text("Unknow");
+            clear();
+        } else {
+            var earthUri = "https://earth.google.com/web/@" + data.loc + ",0a,398836d,1y,0h,0t,0r";
+            $("#loc").html('<a id="loc" href="' + earthUri + '" target="_blank" title="View on Google Earth">' + data.loc + '</a>');
+            draw(parseFloat(data.loc.split(',')[0]), parseFloat(data.loc.split(',')[1]));
+        }
     });
+}
+
+function trim(str) {
+    return str.replace(/(^\s*)|(\s*$)/g, "");
 }
 
 function errorIP() {
@@ -60,6 +78,7 @@ function errorIP() {
         'border-color': '#ff406f',
         'background-color': '#ff406f'
     });
+    $("input").focus();
 }
 
 function checkIP(ipStr) {
@@ -88,6 +107,18 @@ function getQuery(name) {
 }
 
 mapboxgl.accessToken = 'pk.eyJ1Ijoic2hldm9ua3VhbiIsImEiOiJja20yMjlnNDYybGg2Mm5zNW40eTNnNnUwIn0.6xj6sgjWvdQgT_7OQUy_Jg';
+
+function clear() {
+    var map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/streets-v11',
+        center: [0, 0],
+        zoom: 1
+    });
+    map.on('load', function() {
+        console.log("reset map");
+    });
+};
 
 function draw(x, y) {
     var map = new mapboxgl.Map({
