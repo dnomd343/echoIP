@@ -4,7 +4,7 @@ include("country.php");
 include("qqwry.php");
 include("ipinfo.php");
 include("ipip.php");
-include("city.php");
+include("cityCN.php");
 
 function getIPInfo($ip) {
     $specialInfo = checkSpecial($ip); // 检查是否为特殊IP段
@@ -40,20 +40,50 @@ function getIPInfo($ip) {
         if ($addr[0] == '中国' || $detail['country'] == '中国') {
             $info['country'] = 'CN - China（中国）';
             $info['timezone'] = 'Asia/Shanghai';
-            $flagErr = false;
-            if ($addr[1] == '' || $addr[2] == '') {
-                if ($detail['region'] != '' && $detail['city'] != '') {
-                    $addr[1] = $detail['region']; // 修正IPIP.net数据
-                    $addr[2] = $detail['city'];
-                } else {
-                    $flagErr = true; // 国内数据不全
+            if ($detail['region'] == '台湾') { // 修正台湾数据带 "市" 或 "县" 的情况
+                if (mb_substr($detail['city'], -1) == '市' || mb_substr($detail['city'], -1) == '县') {
+                    $detail['city'] = mb_substr($detail['city'], 0, mb_strlen($detail['city']) - 1);
                 }
             }
-            if (!$flagErr) { // 国内数据可用
-                $cityLoc = getLoc($addr[1], $addr[2]); // 获取城市经纬度
+            if ($detail['region'] == '' && $detail['city'] == '') { // 纯真库解析不出数据
+                if ($addr[1] != '' || $addr[2] != '') { // IPIP数据不同时为空
+                    $detail['region'] = $addr[1];
+                    $detail['city'] = $addr[2];
+                }
+            } else if ($detail['region'] == '' || $detail['city'] == '') { // 纯真库存在空数据
+                if ($addr[1] != '' && $addr[2] != '') { // IPIP数据完整
+                    $detail['region'] = $addr[1]; // 修正纯真数据
+                    $detail['city'] = $addr[2];
+                }
+            }
+            if ($detail['region'] != '' || $detail['city'] != '') { // 修正后数据不同时为空
+                $cityLoc = getLoc($detail['region'], $detail['city']); // 获取城市经纬度
                 $info['region'] = $cityLoc['region'];
                 $info['city'] = $cityLoc['city'];
                 $info['loc'] = $cityLoc['lat'] . ',' . $cityLoc['lon'];
+            }
+            if ($detail['isp'] == '教育网') { // 载入纯真库分析出的ISP数据
+                $info['isp'] = 'China Education and Research Network';
+            } else if ($detail['isp'] == '电信') {
+                $info['isp'] = 'China Telecom';
+            } else if ($detail['isp'] == '联通') {
+                $info['isp'] = 'China Unicom Limited';
+            } else if ($detail['isp'] == '移动') {
+                $info['isp'] = 'China Mobile Communications Corporation';
+            } else if ($detail['isp'] == '铁通') {
+                $info['isp'] = 'China Tietong Telecom';
+            } else if ($detail['isp'] == '广电网') {
+                $info['isp'] = 'Shaanxi Broadcast & TV Network Intermediary';
+            } else if ($detail['isp'] == '鹏博士') {
+                $info['isp'] = 'Chengdu Dr.Peng Technology';
+            } else if ($detail['isp'] == '长城') {
+                $info['isp'] = 'Great Wall Broadband Network Service';
+            } else if ($detail['isp'] == '中华电信') {
+                $info['isp'] = 'ChungHwa Telecom';
+            } else if ($detail['isp'] == '亚太电信') {
+                $info['isp'] = 'Asia Pacific Telecom';
+            } else if ($detail['isp'] == '远传电信') {
+                $info['isp'] = 'Far EasTone Telecommunications';
             }
         }
         if (filter_var($ip, \FILTER_VALIDATE_IP,\FILTER_FLAG_IPV4)) { // 录入纯真库数据

@@ -1,6 +1,6 @@
 <?php
 
-// 数据来源：ChinaCity.db
+// 数据来源：cityCN.db
 // 请求方式：getLoc($region, $city)
 // 返回格式：
 // {
@@ -12,7 +12,7 @@
 
 class cityDB extends SQLite3 {
     function __construct() {
-        $this->open('ChinaCity.db'); // 中国省市经纬度数据库
+        $this->open('cityCN.db'); // 中国省市经纬度数据库
     }
 }
 
@@ -26,6 +26,8 @@ function getLoc($region, $city) { // 根据省份/城市信息查询经纬度
         $query_str='SELECT * FROM main WHERE level1="'.$region.'" AND level2="-";'; // 尝试仅查询省份数据
         $raw = $db->query($query_str)->fetchArray(SQLITE3_ASSOC);
         if (!$raw) { // 省份错误，返回北京经纬度
+            $data['region'] = '北京';
+            $data['city'] = '北京';
             $data['lat'] = '39.91';
             $data['lon'] = '116.73';
             return $data;
