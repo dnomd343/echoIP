@@ -37,7 +37,7 @@ function getIPInfo($ip) {
         $info['timezone'] = $data['timezone'];
         $info['loc'] = $data['loc'];
         $info['isp'] = $data['isp'];
-        if ($addr[0] == '中国' || $detail['country'] == '中国') {
+        if ($detail['country'] == '中国') {
             $info['country'] = 'CN - China（中国）';
             $info['timezone'] = 'Asia/Shanghai';
             if ($detail['region'] == '台湾') { // 修正台湾数据带 "市" 或 "县" 的情况
@@ -58,9 +58,11 @@ function getIPInfo($ip) {
             }
             if ($detail['region'] != '' || $detail['city'] != '') { // 修正后数据不同时为空
                 $cityLoc = getLoc($detail['region'], $detail['city']); // 获取城市经纬度
-                $info['region'] = $cityLoc['region'];
-                $info['city'] = $cityLoc['city'];
-                $info['loc'] = $cityLoc['lat'] . ',' . $cityLoc['lon'];
+                if ($cityLoc['region'] != '香港' && $cityLoc['region'] != '澳门' && $cityLoc['region'] != '台湾') { // 跳过港澳台数据
+                    $info['region'] = $cityLoc['region'];
+                    $info['city'] = $cityLoc['city'];
+                    $info['loc'] = $cityLoc['lat'] . ',' . $cityLoc['lon'];
+                }
             }
             if ($detail['isp'] == '教育网') { // 载入纯真库分析出的ISP数据
                 $info['isp'] = 'China Education and Research Network';
@@ -155,7 +157,50 @@ function tryCIDR($beginIP, $endIP) { // 给定IP范围，尝试计算CIDR
     }
 }
 
-function main() {
+function getVersion() { // 获取自身及数据库版本号
+    global $myVersion;
+    $version['echoip'] = $myVersion;
+    $qqwry = new QQWry('qqwry.dat');
+    $IPIP = new IPDB('ipipfree.ipdb');
+    $version['qqwry.dat'] = $qqwry->getVersion();
+    $version['ipip.net'] = $IPIP->getVersion();
+    return $version;
+}
+
+function formatDate($str) { // 将YYYYMMDD处理为YYYY-MM-DD
+    return substr($str, 0, 4) . '-' . substr($str, 4, 2) . '-' . substr($str, 6, 2);
+}
+
+function routeParam() {
+    // error -> 请求出错
+    // version -> 获取版本数据
+    // cli -> 来自命令行下的请求
+    // justip -> 仅查询IP地址
+    // ip -> 请求指定IP的数据
+
+    if ($_GET['error'] == "true") { // 请求出错
+        if ($_GET['cli'] == "true") { // 命令行模式
+            echo 'Illegal Request' . PHP_EOL;
+        } else {
+            header('HTTP/1.1 302 Moved Temporarily');
+            header('Location: /error.html');
+        }
+        exit; // 退出程序
+    }
+
+    if ($_GET['version'] == "true") { // 请求版本信息
+        $version = getVersion();
+        if ($_GET['cli'] == "true") { // 命令行模式
+            echo "echoip -> " . $version['echoip'] . PHP_EOL;
+            echo "qqwry.dat -> " . formatDate($version['qqwry.dat']) . PHP_EOL;
+            echo "ipip.net -> " . formatDate($version['ipip.net']) . PHP_EOL;
+        } else {
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode($version); // 返回JSON数据
+        }
+        exit; // 退出程序
+    }
+
     $ip = isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR']; // 获取客户端IP
     if ($_GET['justip'] == "true") { // 仅查询IP地址
         if ($_GET['cli'] == "true") { // 命令行模式
@@ -166,8 +211,8 @@ function main() {
         }
         exit;
     }
-    $ip = isset($_GET['ip']) ? $_GET['ip'] : $ip; // 若存在请求信息则查询该IP
 
+    $ip = isset($_GET['ip']) ? $_GET['ip'] : $ip; // 若存在请求信息则查询该IP
     if (!filter_var($ip, \FILTER_VALIDATE_IP)) { // 输入IP不合法
         if ($_GET['cli'] == "true") { // 命令行模式
             echo "Illegal IP format" . PHP_EOL;
@@ -183,4 +228,9 @@ function main() {
     echo getIPInfo($ip);
 }
 
+function main() {
+    routeParam(); // 处理传入参数
+}
+
+$myVersion = 'v1.1';
 main();
