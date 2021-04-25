@@ -15,18 +15,18 @@ class countryDB extends SQLite3 {
     }
 }
 
-function getCountry($code) { // 根据两位国家代码获取英文与中文全称 
+function getCountry($code) { // 根据两位国家代码获取英文与中文全称
     if ($code == null) {
         return null;
     }
     $db = new countryDB;
-    $raw = $db->query('SELECT * FROM main WHERE alpha_2="'.$code.'";')->fetchArray(SQLITE3_ASSOC);
+    $raw = $db->query('SELECT * FROM main WHERE alpha_2=\'' . $code . '\';')->fetchArray(SQLITE3_ASSOC);
     $data['code'] = $code;
     if ($raw) {
         $data['en'] = $raw['name_en'];
         $data['cn'] = $raw['name_cn'];
     } else {
-        $data['en'] = "Unknow";
+        $data['en'] = null;
         $data['cn'] = null;
     }
     return $data;

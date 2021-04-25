@@ -31,8 +31,11 @@ function getIPInfo($ip) {
         $info['city'] = $data['city'];
         $info['region'] = $data['region'];
         if (isset($data['country'])) {
-            $info['country'] = $data['country'] . ' - ' . $country['en'];
-            $info['country'] .= "（" . $country['cn'] . "）";
+            $info['country'] = $data['country'];
+            if (isset($country['en'])) {
+                $info['country'] .= ' - ' . $country['en'];
+                $info['country'] .= "（" . $country['cn'] . "）";
+            }
         }
         $info['timezone'] = $data['timezone'];
         $info['loc'] = $data['loc'];

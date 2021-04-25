@@ -14,7 +14,7 @@ $(document).ready(function() {
         $("button").text("Searching...");
         $("table").hide(1000);
         $("input").val(trim($("input").val()));
-        if (checkIP($("input").val()) == "ok") {
+        if ($("input").val() == '' || checkIP($("input").val()) == "ok") {
             getInfo();
         } else {
             errorIP();

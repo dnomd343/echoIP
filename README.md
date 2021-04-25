@@ -28,7 +28,7 @@ shell> curl ip.343.re/8.8.8.8
 ···
 ```
 
-![echoIP-cli](https://pic.dnomd343.top/images/aDE.png)
+![echoIP-cli](https://pic.dnomd343.top/images/pkr.png)
 
 ### 网页访问模式
 
@@ -41,6 +41,8 @@ shell> curl ip.343.re/8.8.8.8
 > 如果想在自己域名下建立本服务，可按如下方式部署
 
 ### Docker方式
+
+echoIP支持Docker容器部署，在[Docker Hub](https://hub.docker.com/repository/docker/dnomd343/echoip)或[Github Package](https://github.com/dnomd343?tab=packages&repo_name=echoIP)有打包完成的镜像下载。
 
 确定你的服务器上有Docker环境
 
@@ -216,6 +218,52 @@ shell> docker run -dit --name echoip -p 1601:8080 echoip
 
 ```
 shell> docker exec -it echoip bash
+```
+
+### 部分接口
+
+1. echoIP支持在URL中指定查询目标IP，格式形如 `https://ip.343.re?ip=1.2.3.4`，访问时自动显示该IP地址的信息。
+
+2. echoIP后端支持返回当前版本信息，接口位于 `/version` 下，若请求来自命令行，则返回可视化格式，否则返回JSON数据。
+
+```
+shell> curl ip.343.re/version
+echoip -> v1.1
+qqwry.dat -> 2021-04-21
+ipip.net -> 2019-07-03
+
+shell> curl https://ip.343.re/version --user-agent 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.72 Safari/537.36 Edg/90.0.818.42'
+{"echoip":"v1.1","qqwry.dat":"20210421","ipip.net":"20190703"}
+```
+
+3. echoIP后端统一接口为 `/query`，可请求以下参数
+
+```
+error -> 请求出错
+version -> 获取版本数据
+cli -> 来自命令行下的请求
+justip -> 仅查询IP地址
+ip -> 请求指定IP的数据
+```
+
+示例
+
+```
+shell> curl "ip.343.re/query?justip=true"
+{"ip":"116.57.98.121"}
+shell> curl "ip.343.re/query?justip=true&cli=true"
+116.57.98.124
+shell> curl "ip.343.re/query?cli=true&ip=7.7.7.7"
+IP: 7.7.7.7
+AS: AS8003
+City: Atlantic City
+Region: New Jersey
+Country: US - United States（美国）
+Timezone: America/New_York
+Location: 39.3642,-74.4231
+ISP: Global Resource Systems, LLC
+Scope: 7.0.0.0/8
+Detail: 美国俄亥俄州哥伦布市DoD网络信息中心
 ```
 
 ### ipinfo.io
