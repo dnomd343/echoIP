@@ -217,7 +217,7 @@ shell> docker run -dit --name echoip -p 1601:8080 echoip
 进入容器调试
 
 ```
-shell> docker exec -it echoip bash
+shell> docker exec -it echoip sh
 ```
 
 ### 部分接口
@@ -233,7 +233,7 @@ qqwry.dat -> 2021-04-21
 ipip.net -> 2019-07-03
 
 shell> curl https://ip.343.re/version --user-agent 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.72 Safari/537.36 Edg/90.0.818.42'
-{"echoip":"v1.1","qqwry.dat":"20210421","ipip.net":"20190703"}
+{"echoip":"v1.1","qqwry":"20210421","ipip":"20190703"}
 ```
 
 3. echoIP后端统一接口为 `/query`，可请求以下参数

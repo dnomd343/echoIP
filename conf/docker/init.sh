@@ -1,4 +1,4 @@
-service php7.3-fpm start
-service nginx start
+/usr/sbin/php-fpm7
+/usr/sbin/nginx
 node /var/www/echoIP/backend/qqwryFormat/server.js
-/bin/bash
+/bin/sh
