@@ -165,8 +165,8 @@ function getVersion() { // 获取自身及数据库版本号
     $version['echoip'] = $myVersion;
     $qqwry = new QQWry('qqwry.dat');
     $IPIP = new IPDB('ipipfree.ipdb');
-    $version['qqwry.dat'] = $qqwry->getVersion();
-    $version['ipip.net'] = $IPIP->getVersion();
+    $version['qqwry'] = $qqwry->getVersion();
+    $version['ipip'] = $IPIP->getVersion();
     return $version;
 }
 
@@ -195,8 +195,8 @@ function routeParam() {
         $version = getVersion();
         if ($_GET['cli'] == "true") { // 命令行模式
             echo "echoip -> " . $version['echoip'] . PHP_EOL;
-            echo "qqwry.dat -> " . formatDate($version['qqwry.dat']) . PHP_EOL;
-            echo "ipip.net -> " . formatDate($version['ipip.net']) . PHP_EOL;
+            echo "qqwry.dat -> " . formatDate($version['qqwry']) . PHP_EOL;
+            echo "ipip.net -> " . formatDate($version['ipip']) . PHP_EOL;
         } else {
             header('Content-Type: application/json; charset=utf-8');
             echo json_encode($version); // 返回JSON数据

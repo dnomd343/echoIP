@@ -9,9 +9,6 @@
 </head>
 
 <script src="https://cdn.staticfile.org/jquery/1.11.0/jquery.min.js"></script>
-<!-- <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.js'></script> -->
-<!-- <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.css' rel='stylesheet' /> -->
-
 <script src='assets/mapbox/mapbox-gl.js'></script>
 <link href='assets/mapbox/mapbox-gl.min.css' rel='stylesheet' />
 <link href="assets/css/main.min.css" rel="stylesheet" />
@@ -23,13 +20,19 @@
         padding: 0;
     }
     
-    #loc {
+    .table {
+        color: #282828;
+    }
+
+    #loc a,
+    #as a {
         text-decoration: none;
-        color: #363636;
+        color: #282828;
         transition: all 0.6s;
     }
     
-    #loc:hover {
+    #loc a:hover,
+    #as a:hover {
         color: #2d87ee;
     }
     
@@ -45,20 +48,18 @@
         display: none !important;
     }
     
-    #sub-title {
+    #title {
         margin-top: 0px;
         margin-bottom: 20px;
     }
     
-    #sub-title,
-    a {
+    #title a {
         text-decoration: none;
         color: #555;
         transition: all 0.6s;
     }
     
-    #sub-title,
-    a:hover {
+    #title a:hover {
         color: #5165db;
     }
     
@@ -94,7 +95,7 @@
         <div id="main-hero" class="hero-body" style="padding: 0;">
             <div class="has-text-centered is-subheader-caption positioncontrol" style="padding-bottom: 0;">
                 <div id="output" class="contact-page-form flex-card">
-                    <h3 id="sub-title">
+                    <h3 id="title">
                         <a href="https://github.com/dnomd343/echoIP" target="_blank" title="Source code on Github">echoIP</a>
                     </h3>
                     <div class="columns is-multiline">

@@ -20,6 +20,9 @@ $(document).ready(function() {
             errorIP();
         }
     });
+    $("#output").dblclick(function() {
+        getVersion();
+    });
 });
 
 $(document).keydown(function(event) {
@@ -41,7 +44,6 @@ function getInfo() {
         $("button").text("Search");
         $("table").show(1000);
         $("#ip").text(data.ip);
-        data.as = (data.as == null) ? "Unknow" : data.as;
         data.city = (data.city == null) ? "Unknow" : data.city;
         data.region = (data.region == null) ? "Unknow" : data.region;
         data.country = (data.country == null) ? "Unknow" : data.country;
@@ -49,7 +51,6 @@ function getInfo() {
         data.isp = (data.isp == null) ? "Unknow" : data.isp;
         data.scope = (data.scope == null) ? "Unknow" : data.scope;
         data.detail = (data.detail == null || data.detail == ' ') ? "Unknow" : data.detail;
-        $("#as").text(data.as);
         $("#city").text(data.city);
         $("#region").text(data.region);
         $("#country").text(data.country);
@@ -57,14 +58,34 @@ function getInfo() {
         $("#isp").text(data.isp);
         $("#scope").text(data.scope);
         $("#detail").text(data.detail);
+        if (data.as == null) {
+            $("#as").text("Unknow");
+        } else {
+            $("#as").text(data.as);
+            var asUri = "https://bgpview.io/asn/" + data.as.substr(2);
+            $("#as").html('<a href="' + asUri + '" target="_blank" title="AS information">' + data.as + '</a>');
+        }
         if (data.loc == null) {
             $("#loc").text("Unknow");
             clear();
         } else {
             var earthUri = "https://earth.google.com/web/@" + data.loc + ",0a,398836d,1y,0h,0t,0r";
-            $("#loc").html('<a id="loc" href="' + earthUri + '" target="_blank" title="View on Google Earth">' + data.loc + '</a>');
+            $("#loc").html('<a href="' + earthUri + '" target="_blank" title="View on Google Earth">' + data.loc + '</a>');
             draw(parseFloat(data.loc.split(',')[0]), parseFloat(data.loc.split(',')[1]));
         }
+    });
+}
+
+function getVersion() {
+    $.get("/version", function(data) {
+        console.log(data);
+        data.qqwry = data.qqwry.slice(0, 4) + "-" + data.qqwry.slice(4, 6) + "-" + data.qqwry.slice(6, 8);
+        data.ipip = data.ipip.slice(0, 4) + "-" + data.ipip.slice(4, 6) + "-" + data.ipip.slice(6, 8);
+        var data_ver = "";
+        data_ver += "echoIP: " + data.echoip + "\n";
+        data_ver += "纯真数据库: " + data.qqwry + "\n";
+        data_ver += "IPIP.net数据库: " + data.ipip;
+        alert(data_ver);
     });
 }
 
