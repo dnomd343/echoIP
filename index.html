@@ -9,33 +9,18 @@
 </head>
 
 <script src="https://cdn.staticfile.org/jquery/1.11.0/jquery.min.js"></script>
+<script src="assets/js/jquery.qrcode.min.js"></script>
 <script src='assets/mapbox/mapbox-gl.js'></script>
+<script src="assets/js/main.min.js"></script>
 <link href='assets/mapbox/mapbox-gl.min.css' rel='stylesheet' />
 <link href="assets/css/main.min.css" rel="stylesheet" />
-<script src="assets/js/main.min.js"></script>
 
 <style>
     body {
         margin: 0;
         padding: 0;
     }
-    
-    .table {
-        color: #282828;
-    }
 
-    #loc a,
-    #as a {
-        text-decoration: none;
-        color: #282828;
-        transition: all 0.6s;
-    }
-    
-    #loc a:hover,
-    #as a:hover {
-        color: #2d87ee;
-    }
-    
     #map {
         position: absolute;
         top: 0;
@@ -62,7 +47,23 @@
     #title a:hover {
         color: #5165db;
     }
+
+    .table {
+        color: #282828;
+    }
+
+    #loc a,
+    #as a {
+        text-decoration: none;
+        color: #282828;
+        transition: all 0.6s;
+    }
     
+    #loc a:hover,
+    #as a:hover {
+        color: #2d87ee;
+    }
+
     .positioncontrol {
         position: absolute;
         left: calc(100vw*0.8 - 190px);
@@ -87,12 +88,26 @@
             backdrop-filter: saturate(150%) blur(10px);
         }
     }
+
+    #share {
+        position: absolute;
+    }
+
+    #qrcode {
+        padding: 10px;
+        margin-bottom: 0;
+        background-color: rgba(255, 255, 255, 0.95);
+    }
+
+    #qrcode canvas {
+        display: block;
+    }
     
 </style>
 
 <body>
     <div class="hero is-fullheight is-app-grey mapbox-hero">
-        <div id="main-hero" class="hero-body" style="padding: 0;">
+        <div class="hero-body" style="padding: 0;">
             <div class="has-text-centered is-subheader-caption positioncontrol" style="padding-bottom: 0;">
                 <div id="output" class="contact-page-form flex-card">
                     <h3 id="title">
@@ -157,6 +172,9 @@
                         </tr>
                     </table>
                 </div>
+            </div>
+            <div id="share">
+                <a id="qrcode" href="#" class="contact-page-form flex-card"></a>
             </div>
             <div id='map'></div>
         </div>

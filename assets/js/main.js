@@ -1,3 +1,5 @@
+var onShareDiv = false;
+
 $(document).ready(function() {
     if (getQuery("ip") === null) {
         getInfo();
@@ -6,12 +8,14 @@ $(document).ready(function() {
         getInfo();
     }
     $("table").hide();
-    $("button").click(function() {
-        $("button").css({
+    $("#share").hide();
+    $("button").click(function(event) {
+        event.stopPropagation();
+        $(this).css({
             'border-color': '',
             'background-color': ''
         });
-        $("button").text("Searching...");
+        $(this).text("Searching...");
         $("table").hide(1000);
         $("input").val(trim($("input").val()));
         if ($("input").val() == '' || checkIP($("input").val()) == "ok") {
@@ -20,8 +24,35 @@ $(document).ready(function() {
             errorIP();
         }
     });
-    $("#output").dblclick(function() {
+    $("button").dblclick(function() {
         getVersion();
+    });
+    $('#output').dblclick(function() {
+        showQRCode();
+    });
+    $('#output').click(function() {
+        if (!$("#qrcode").is(':hidden')) {
+            hideQRCode();
+        }
+    });
+    $('#output').mouseleave(function() {
+        setTimeout(function () {
+            if (onShareDiv === false) {
+                hideQRCode();
+            }
+        }, 100);
+    });
+    $("#share").mouseleave(function() {
+        onShareDiv = false;
+    });
+    $("#share").mouseenter(function() {
+        onShareDiv = true;
+    });
+    $("input").click(function(event) {
+        event.stopPropagation();
+    });
+    $("table").click(function(event) {
+        event.stopPropagation();
     });
 });
 
@@ -127,6 +158,39 @@ function getQuery(name) {
     }
 }
 
+function showQRCode() {
+    var ip = $("#ip").text();
+    if (checkIP(ip) == 'ok') {
+        var pageUri = "https://" + window.location.host + "/?ip=" + ip;
+        $("#qrcode").attr("href", pageUri);
+        $("#qrcode").empty();
+        $('#qrcode').qrcode({
+            width: 100,
+            height: 100,
+            text: pageUri
+        });
+        var shareX = event.pageX - 50;
+        var shareY = event.pageY + 15;
+        if ($("#qrcode").is(':hidden')) {
+            $("#share").css('left', shareX);
+            $("#share").css('top', shareY);
+            $("#share").show(200);
+        } else {
+            $("#share").hide(50, function() {
+                $("#share").css('left', shareX);
+                $("#share").css('top', shareY);
+                $("#share").show(150);
+            });
+        }
+    }
+}
+
+function hideQRCode() {
+    $("#share").hide(200, function() {
+        $("#qrcode").empty();
+    });
+}
+
 mapboxgl.accessToken = 'pk.eyJ1Ijoic2hldm9ua3VhbiIsImEiOiJja20yMjlnNDYybGg2Mm5zNW40eTNnNnUwIn0.6xj6sgjWvdQgT_7OQUy_Jg';
 
 function clear() {
@@ -166,19 +230,16 @@ function draw(x, y) {
         render: function() {
             var duration = 1000;
             var t = (performance.now() % duration) / duration;
-
             var radius = size / 2 * 0.3;
             var outerRadius = size / 2 * 0.7 * t + radius;
             var context = this.context;
 
-            // draw outer circle
             context.clearRect(0, 0, this.width, this.height);
             context.beginPath();
             context.arc(this.width / 2, this.height / 2, outerRadius, 0, Math.PI * 2);
             context.fillStyle = 'rgba(255, 200, 200,' + (1 - t) + ')';
             context.fill();
 
-            // draw inner circle
             context.beginPath();
             context.arc(this.width / 2, this.height / 2, radius, 0, Math.PI * 2);
             context.fillStyle = 'rgba(255, 100, 100, 1)';
@@ -187,13 +248,8 @@ function draw(x, y) {
             context.fill();
             context.stroke();
 
-            // update this image's data with data from the canvas
             this.data = context.getImageData(0, 0, this.width, this.height).data;
-
-            // keep the map repainting
             map.triggerRepaint();
-
-            // return `true` to let the map know that the image was updated
             return true;
         }
     };
