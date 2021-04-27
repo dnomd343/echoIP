@@ -85,6 +85,12 @@ function showQRCode() {
         });
         var shareLeft = event.pageX - 50;
         var shareTop = event.pageY + 15;
+        if (shareLeft + 122 > $(document).width()) {
+            shareLeft = $(document).width() - 122;
+        }
+        if (shareTop + 122 > $(document).height()) {
+            shareTop = $(document).height() - 122;
+        }
         shareX = shareLeft + 61;
         shareY = shareTop + 61;
         if ($("#qrcode").is(':hidden')) {
@@ -210,15 +216,13 @@ function clear() {
 };
 
 function draw(x, y) {
+    var size = 100;
     var map = new mapboxgl.Map({
         container: 'map',
         style: 'mapbox://styles/mapbox/streets-v11',
         center: [y, x],
         zoom: 3
     });
-
-    var size = 100;
-
     var pulsingDot = {
         width: size,
         height: size,

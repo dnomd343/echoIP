@@ -186,7 +186,7 @@ function routeParam() {
             echo 'Illegal Request' . PHP_EOL;
         } else {
             header('HTTP/1.1 302 Moved Temporarily');
-            header('Location: /error.html');
+            header('Location: /error');
         }
         exit; // 退出程序
     }
@@ -218,7 +218,7 @@ function routeParam() {
     $ip = isset($_GET['ip']) ? $_GET['ip'] : $ip; // 若存在请求信息则查询该IP
     if (!filter_var($ip, \FILTER_VALIDATE_IP)) { // 输入IP不合法
         if ($_GET['cli'] == "true") { // 命令行模式
-            echo "Illegal IP format" . PHP_EOL;
+            echo "Illegal Request" . PHP_EOL;
         } else {
             $reply = array();
             $reply['status'] = 'F';
