@@ -1,4 +1,6 @@
-var onShareDiv = false;
+var rangeSize = 300;
+var shareX, shareY;
+mapboxgl.accessToken = 'pk.eyJ1Ijoic2hldm9ua3VhbiIsImEiOiJja20yMjlnNDYybGg2Mm5zNW40eTNnNnUwIn0.6xj6sgjWvdQgT_7OQUy_Jg';
 
 $(document).ready(function() {
     if (getQuery("ip") === null) {
@@ -9,8 +11,7 @@ $(document).ready(function() {
     }
     $("table").hide();
     $("#share").hide();
-    $("button").click(function(event) {
-        event.stopPropagation();
+    $("button").click(function() {
         $(this).css({
             'border-color': '',
             'background-color': ''
@@ -24,35 +25,30 @@ $(document).ready(function() {
             errorIP();
         }
     });
-    $("button").dblclick(function() {
+    $("button").dblclick(function(event) {
+        event.stopPropagation();
         getVersion();
+    });
+    $("input").dblclick(function(event) {
+        event.stopPropagation();
+    });
+    $("table").dblclick(function(event) {
+        event.stopPropagation();
     });
     $('#output').dblclick(function() {
         showQRCode();
     });
     $('#output').click(function() {
-        if (!$("#qrcode").is(':hidden')) {
-            hideQRCode();
-        }
+        hideQRCode();
     });
-    $('#output').mouseleave(function() {
-        setTimeout(function () {
-            if (onShareDiv === false) {
-                hideQRCode();
-            }
-        }, 100);
+    $('#map').click(function() {
+        hideQRCode();
     });
-    $("#share").mouseleave(function() {
-        onShareDiv = false;
+    $('body').mousemove(function() {
+        checkRange();
     });
-    $("#share").mouseenter(function() {
-        onShareDiv = true;
-    });
-    $("input").click(function(event) {
-        event.stopPropagation();
-    });
-    $("table").click(function(event) {
-        event.stopPropagation();
+    $('body').mouseleave(function() {
+        hideQRCode();
     });
 });
 
@@ -61,6 +57,49 @@ $(document).keydown(function(event) {
         $("button").focus();
     }
 });
+
+function checkRange() {
+    var distanceX = Math.abs(event.pageX - shareX);
+    var distanceY = Math.abs(event.pageY - shareY);
+    if ((distanceX >= rangeSize) || (distanceY >= rangeSize)) {
+        hideQRCode();
+    }
+}
+
+function hideQRCode() {
+    if (!$("#qrcode").is(':hidden')) {
+        $("#share").hide(200);
+    }
+}
+
+function showQRCode() {
+    var ip = $("#ip").text();
+    if (checkIP(ip) == 'ok') {
+        var pageUri = "https://" + window.location.host + "/?ip=" + ip;
+        $("#qrcode").attr("href", pageUri);
+        $("#qrcode").empty();
+        $('#qrcode').qrcode({
+            width: 100,
+            height: 100,
+            text: pageUri
+        });
+        var shareLeft = event.pageX - 50;
+        var shareTop = event.pageY + 15;
+        shareX = shareLeft + 61;
+        shareY = shareTop + 61;
+        if ($("#qrcode").is(':hidden')) {
+            $("#share").css('left', shareLeft);
+            $("#share").css('top', shareTop);
+            $("#share").show(200);
+        } else {
+            $("#share").hide(100, function() {
+                $("#share").css('left', shareLeft);
+                $("#share").css('top', shareTop);
+                $("#share").show(150);
+            });
+        }
+    }
+}
 
 function getInfo() {
     $.get("/info/" + $("input").val(), function(data) {
@@ -157,41 +196,6 @@ function getQuery(name) {
         return null;
     }
 }
-
-function showQRCode() {
-    var ip = $("#ip").text();
-    if (checkIP(ip) == 'ok') {
-        var pageUri = "https://" + window.location.host + "/?ip=" + ip;
-        $("#qrcode").attr("href", pageUri);
-        $("#qrcode").empty();
-        $('#qrcode').qrcode({
-            width: 100,
-            height: 100,
-            text: pageUri
-        });
-        var shareX = event.pageX - 50;
-        var shareY = event.pageY + 15;
-        if ($("#qrcode").is(':hidden')) {
-            $("#share").css('left', shareX);
-            $("#share").css('top', shareY);
-            $("#share").show(200);
-        } else {
-            $("#share").hide(50, function() {
-                $("#share").css('left', shareX);
-                $("#share").css('top', shareY);
-                $("#share").show(150);
-            });
-        }
-    }
-}
-
-function hideQRCode() {
-    $("#share").hide(200, function() {
-        $("#qrcode").empty();
-    });
-}
-
-mapboxgl.accessToken = 'pk.eyJ1Ijoic2hldm9ua3VhbiIsImEiOiJja20yMjlnNDYybGg2Mm5zNW40eTNnNnUwIn0.6xj6sgjWvdQgT_7OQUy_Jg';
 
 function clear() {
     var map = new mapboxgl.Map({
