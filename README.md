@@ -32,7 +32,7 @@ shell> curl ip.343.re/8.8.8.8
 
 ### 网页访问模式
 
-你可以直接在 [ip.343.re](https://ip.343.re/) 进行查询，或者将项目部署到自己的服务器上。
+你可以直接在 [https://ip.343.re](https://ip.343.re) 或 [https://ip.dnomd343.top](https://ip.dnomd343.top) 上进行查询，或者将项目部署到自己的服务器上。
 
 ![echoIP-web](https://pic.dnomd343.top/images/Wg7.png)
 
@@ -40,9 +40,9 @@ shell> curl ip.343.re/8.8.8.8
 
 > 如果想在自己域名下建立本服务，可按如下方式部署
 
-### Docker方式
+### Docker方式（推荐）
 
-echoIP支持Docker容器部署，在[Docker Hub](https://hub.docker.com/repository/docker/dnomd343/echoip)或[Github Package](https://github.com/dnomd343?tab=packages&repo_name=echoIP)有打包完成的镜像下载。
+echoIP支持Docker容器部署，在[Docker Hub](https://hub.docker.com/repository/docker/dnomd343/echoip)可获取已构建的镜像。
 
 确定你的服务器上有Docker环境
 
@@ -55,7 +55,7 @@ shell> docker -v
 
 ```
 # 映射容器服务到宿主机1601端口
-shell> docker run -dit --name echoip -p 1601:8080 dnomd343/echoip
+shell> docker run -d --name echoip -p 1601:1601 dnomd343/echoip
 ```
 
 测试容器是否正常工作
@@ -211,7 +211,7 @@ shell> docker build -t echoip https://github.com/dnomd343/echoIP.git#master
 启动容器
 
 ```
-shell> docker run -dit --name echoip -p 1601:8080 echoip
+shell> docker run -d --name echoip -p 1601:1601 echoip
 ```
 
 进入容器调试
@@ -251,8 +251,10 @@ ip -> 请求指定IP的数据
 ```
 shell> curl "ip.343.re/query?justip=true"
 {"ip":"116.57.98.121"}
+
 shell> curl "ip.343.re/query?justip=true&cli=true"
 116.57.98.124
+
 shell> curl "ip.343.re/query?cli=true&ip=7.7.7.7"
 IP: 7.7.7.7
 AS: AS8003

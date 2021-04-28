@@ -222,7 +222,7 @@ function routeParam() {
         } else {
             $reply = array();
             $reply['status'] = 'F';
-            $reply['message'] = 'Illegal IP format';
+            $reply['message'] = 'Illegal Request';
             header('Content-Type: application/json; charset=utf-8');
             echo json_encode($reply);
         }
