@@ -194,7 +194,7 @@ function getInfo() {
             $("#loc").text("Unknow");
             clear();
         } else {
-            var earthUri = "https://earth.google.com/web/@" + data.loc + ",0a,398836d,1y,0h,0t,0r";
+            var earthUri = "https://earth.google.com/web/@" + data.loc + ",9.963a,7999.357d,35y,-34.3h,45t,0r/data=KAI";
             $("#loc").html('<a href="' + earthUri + '" target="_blank" title="View on Google Earth">' + data.loc + '</a>');
             draw(parseFloat(data.loc.split(',')[0]), parseFloat(data.loc.split(',')[1]));
         }
