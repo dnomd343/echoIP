@@ -299,6 +299,16 @@ Detail: 美国俄亥俄州哥伦布市DoD网络信息中心
 
 数据库文件位于 `backend/qqwry.dat`，数据库更新脚本位于 `backend/qqwryUpdate.sh`，查询代码位于 `backend/qqwry.php`，数据解析服务位于 `backend/qqwryFormat/*`
 
+Docker部署方式中，容器内已经预留了 `qqwry.dat` 的自动升级功能，每天00:00时会运行脚本拉取数据库更新。对于其他部署方式，可以配置 `crontab` 自动执行更新脚本，示例如下
+
+```
+# 打开crontab任务列表
+shell> crontab -e
+···
+# 添加如下一行，表示每天00:00时自动运行指定脚本
+0   0   *   *   *   /var/www/echoIP/backend/qqwryUpdate.sh
+```
+
 ## 许可证
 
 MIT ©2021 [@dnomd343](https://github.com/dnomd343) [@ShevonKuan](https://github.com/ShevonKuan)

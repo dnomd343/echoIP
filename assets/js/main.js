@@ -9,7 +9,7 @@ $(document).ready(function() {
         $("input").val(getQuery("ip"));
         getInfo();
     }
-    $("table").hide();
+    $("#table").hide();
     $("#share").hide();
     $("button").click(function() {
         $(this).css({
@@ -17,7 +17,7 @@ $(document).ready(function() {
             'background-color': ''
         });
         $(this).text("Searching...");
-        $("table").hide(1000);
+        $("#table").hide(500);
         $("input").val(trim($("input").val()));
         if ($("input").val() == '' || checkIP($("input").val()) == "ok") {
             getInfo();
@@ -118,7 +118,6 @@ function getInfo() {
             $("input").val(data.ip);
         }
         $("button").text("Search");
-        $("table").show(1000);
         $("#ip").text(data.ip);
         data.city = (data.city == null) ? "Unknow" : data.city;
         data.region = (data.region == null) ? "Unknow" : data.region;
@@ -149,6 +148,7 @@ function getInfo() {
             $("#loc").html('<a href="' + earthUri + '" target="_blank" title="View on Google Earth">' + data.loc + '</a>');
             draw(parseFloat(data.loc.split(',')[0]), parseFloat(data.loc.split(',')[1]));
         }
+        $("#table").show(500);
     });
 }
 

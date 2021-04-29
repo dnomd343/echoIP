@@ -48,6 +48,10 @@
         color: #5165db;
     }
 
+    .input {
+        background-color: rgba(255, 255, 255, 0.5);
+    }
+
     .table {
         color: #282828;
     }
@@ -76,14 +80,25 @@
 
     .positioncontrol {
         position: absolute;
-        left: calc(100vw*0.8 - 190px);
+        left: calc(80vw - 180px);
+        transform: translate(-20%, 0);
     }
     
-    @media screen and (max-width: 600px) {
+    @media screen and (max-width: 800px) {
         .positioncontrol {
             position: absolute;
             left: 0;
             right: 0;
+            transform: translate(0, 0);
+        }
+    }
+
+    @media all and (orientation : portrait) {
+        .positioncontrol {
+            position: absolute;
+            left: 0;
+            right: 0;
+            transform: translate(0, 0);
         }
     }
 
@@ -112,7 +127,6 @@
     #qrcode canvas {
         display: block;
     }
-    
 </style>
 
 <body>
@@ -127,7 +141,7 @@
                         <div class="column">
                             <div class="field">
                                 <div class="control">
-                                    <input type="text" placeholder="Search here." class="input is-medium" style="background-color: rgba(255, 255, 255, 0.5);">
+                                    <input type="text" placeholder="Search here." class="input is-medium">
                                 </div>
                             </div>
                         </div>
@@ -139,48 +153,50 @@
                             </div>
                         </div>
                     </div>
-                    <table class="table" style="background-color: transparent;">
-                        <tr>
-                            <td>IP</td>
-                            <td id="ip"></td>
-                        </tr>
-                        <tr>
-                            <td>AS</td>
-                            <td id="as"></td>
-                        </tr>
-                        <tr>
-                            <td>City</td>
-                            <td id="city"></td>
-                        </tr>
-                        <tr>
-                            <td>Region</td>
-                            <td id="region"></td>
-                        </tr>
-                        <tr>
-                            <td>Country</td>
-                            <td id="country"></td>
-                        </tr>
-                        <tr>
-                            <td>Timezone</td>
-                            <td id="timezone"></td>
-                        </tr>
-                        <tr>
-                            <td>Location</td>
-                            <td id="loc"></td>
-                        </tr>
-                        <tr>
-                            <td>ISP</td>
-                            <td id="isp"></td>
-                        </tr>
-                        <tr>
-                            <td>Scope</td>
-                            <td id="scope"></td>
-                        </tr>
-                        <tr>
-                            <td>Detail</td>
-                            <td id="detail"></td>
-                        </tr>
-                    </table>
+                    <div id="table">
+                        <table class="table" style="background-color: transparent;">
+                            <tr>
+                                <td>IP</td>
+                                <td id="ip"></td>
+                            </tr>
+                            <tr>
+                                <td>AS</td>
+                                <td id="as"></td>
+                            </tr>
+                            <tr>
+                                <td>City</td>
+                                <td id="city"></td>
+                            </tr>
+                            <tr>
+                                <td>Region</td>
+                                <td id="region"></td>
+                            </tr>
+                            <tr>
+                                <td>Country</td>
+                                <td id="country"></td>
+                            </tr>
+                            <tr>
+                                <td>Timezone</td>
+                                <td id="timezone"></td>
+                            </tr>
+                            <tr>
+                                <td>Location</td>
+                                <td id="loc"></td>
+                            </tr>
+                            <tr>
+                                <td>ISP</td>
+                                <td id="isp"></td>
+                            </tr>
+                            <tr>
+                                <td>Scope</td>
+                                <td id="scope"></td>
+                            </tr>
+                            <tr>
+                                <td>Detail</td>
+                                <td id="detail"></td>
+                            </tr>
+                        </table>
+                    </div>
                 </div>
             </div>
             <div id="share">
