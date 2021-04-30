@@ -28,11 +28,14 @@ $(document).ready(function() {
             errorIP();
         }
     });
-    $("button").dblclick(function(event) {
+    $(".table tr:first td:first").dblclick(function(event) {
         event.stopPropagation();
         getVersion();
     });
     $("input").dblclick(function(event) {
+        event.stopPropagation();
+    });
+    $("button").dblclick(function(event) {
         event.stopPropagation();
     });
     $("table").dblclick(function(event) {
