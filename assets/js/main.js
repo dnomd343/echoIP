@@ -94,12 +94,11 @@ function unlockMap() {
     if (!isPortrait()) {
         return;
     }
-    $('.positioncontrol').css('left', '0');
-    $('.positioncontrol').css('right', '');
-    var objWidth = $(".positioncontrol").css('width');
-    objWidth = objWidth.substr(0, objWidth.length - 2);
-    var left = ($(document).width() - objWidth) / 2;
-    $(".positioncontrol").css('left', left + 'px');
+    var margin = $('#output').css('margin-left');
+    if (margin !== '0px') {
+        $('.positioncontrol').css('left', margin);
+        $('.positioncontrol').css('right', margin);
+    }
 }
 
 function checkRange() {
