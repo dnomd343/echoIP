@@ -235,5 +235,5 @@ function main() {
     routeParam(); // 处理传入参数
 }
 
-$myVersion = 'v1.1';
+$myVersion = 'v1.2';
 main();
