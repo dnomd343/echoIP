@@ -2,9 +2,13 @@
 
 > 显示客户端IP、查询IP详细信息
 
-结合 [ipinfo.io](https://ipinfo.io/)、[IPIP.net](https://www.ipip.net/)、[纯真IP](http://www.cz88.net/) 的数据获取IP地址的信息，支持IPv4与IPv6地址。
++ 获取IP地址的AS、地址、ISP、网段等详细信息，支持IPv4与IPv6地址。
 
-客户端可直接向服务器询问自己的IP地址，同时可指定任意IP地址获取其详细信息。
++ 项目部署在服务器上，客户端向服务器查询自身IP地址，或任意IP地址的详细信息。
+
++ 兼容CDN封装在http头部的原始IP信息，部署时无需做额外修改，直接启用CDN加速即可。
+
++ 数据来自多个上游服务整合处理，包括在线API与离线数据库，同时支持命令行与网页端查询方式。
 
 ## 如何使用
 
@@ -34,7 +38,9 @@ shell> curl ip.343.re/8.8.8.8
 
 你可以直接在 [https://ip.343.re](https://ip.343.re) 或 [https://ip.dnomd343.top](https://ip.dnomd343.top) 上进行查询，或者将项目部署到自己的服务器上。
 
-![echoIP-web](https://pic.dnomd343.top/images/Wg7.png)
+![echoIP-web](https://pic.dnomd343.top/images/FR5.png)
+
+你可以尝试双击显示框空白处，将会弹出一个二维码，扫描可以直达当前页面。
 
 ## 如何部署
 
@@ -219,6 +225,12 @@ server {
 ## 开发资料
 
 ### Docker容器
+
+交叉构建多架构镜像
+
+```
+shell> docker buildx build -t dnomd343/echoIP --platform="linux/amd64,linux/arm64,linux/386,linux/arm/v7" https://github.com/dnomd343/echoIP.git#master --push
+```
 
 制作echoIP镜像
 
