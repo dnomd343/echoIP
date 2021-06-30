@@ -32,7 +32,7 @@ shell> curl ip.343.re/8.8.8.8
 ···
 ```
 
-![echoIP-cli](https://pic.dnomd343.top/images/pkr.png)
+![echoIP-cli](https://pic.dnomd343.top/images/X4F.png)
 
 ### 网页访问模式
 
@@ -40,7 +40,13 @@ shell> curl ip.343.re/8.8.8.8
 
 ![echoIP-web](https://pic.dnomd343.top/images/FR5.png)
 
-你可以尝试双击显示框空白处，将会弹出一个二维码，扫描可以直达当前页面。
++ 双击IP字段，可获取当前数据库版本。
+
++ 点击AS编号，将跳转到该自治系统的详细信息页面。
+
++ 点击经纬度信息，将打开谷歌地球并显示该点的三维图像。
+
++ 双击显示框空白处，将会弹出一个二维码，扫描可以直达当前页面。
 
 ## 如何部署
 
@@ -229,7 +235,7 @@ server {
 交叉构建多架构镜像
 
 ```
-shell> docker buildx build -t dnomd343/echoIP --platform="linux/amd64,linux/arm64,linux/386,linux/arm/v7" https://github.com/dnomd343/echoIP.git#master --push
+shell> docker buildx build -t dnomd343/echoip --platform="linux/amd64,linux/arm64,linux/386,linux/arm/v7" https://github.com/dnomd343/echoIP.git#master --push
 ```
 
 制作echoIP镜像
