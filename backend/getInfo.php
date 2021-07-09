@@ -100,7 +100,8 @@ function getIPInfo($ip) {
         }
     }
 
-    if ($_GET['cli'] == "true") { // 使用命令行模式
+    global $request;
+    if ($request['cli']) { // 使用命令行模式
         $cli = "IP: ".$info['ip'] . PHP_EOL;
         $cli .= "AS: ".$info['as'] . PHP_EOL;
         $cli .= "City: ".$info['city'] . PHP_EOL;

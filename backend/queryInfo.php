@@ -22,7 +22,7 @@ function preRount() { // 解析请求路径
     } else if ($requestUri == '/version') { // URI -> /version
         $request['version'] = true;
         return;
-    } else if ($requestUri == '/info') { // URI -> /info
+    } else if ($requestUri == '/info' || $requestUri == '/info/') { // URI -> /info or /info/
         $request['ip'] = getClientIP();
         return;
     } else if ($requestUri == '/query') { // URI -> /query?xxx=xxx
@@ -34,7 +34,11 @@ function preRount() { // 解析请求路径
     }
     preg_match('#^/([^/]+?)$#', $requestUri, $match); // URI -> /{ip}
     if (count($match) > 0) {
-        $request['ip'] = $match[1];
+        if ($request['cli']) { // 命令行模式
+            $request['ip'] = $match[1];
+        } else {
+            $request['error'] = true;
+        }
         return;
     }
     preg_match('#^/info/([^/]+?)$#', $requestUri, $match); // URI -> /info/{ip}
@@ -91,9 +95,10 @@ function routeParam() {
         if ($request['cli']) { // 命令行模式
             echo "Illegal Request" . PHP_EOL;
         } else {
-            $reply = array();
-            $reply['status'] = 'F';
-            $reply['message'] = 'Illegal Request';
+            $reply = array(
+                'status' => 'F',
+                'message' => 'Illegal Request'
+            );
             header('Content-Type: application/json; charset=utf-8');
             echo json_encode($reply);
         }
