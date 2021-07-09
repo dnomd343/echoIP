@@ -102,16 +102,16 @@ function getIPInfo($ip) {
 
     global $request;
     if ($request['cli']) { // 使用命令行模式
-        $cli = "IP: ".$info['ip'] . PHP_EOL;
-        $cli .= "AS: ".$info['as'] . PHP_EOL;
-        $cli .= "City: ".$info['city'] . PHP_EOL;
-        $cli .= "Region: ".$info['region'] . PHP_EOL;
-        $cli .= "Country: ".$info['country'] . PHP_EOL;
-        $cli .= "Timezone: ".$info['timezone'] . PHP_EOL;
-        $cli .= "Location: ".$info['loc'] . PHP_EOL;
-        $cli .= "ISP: ".$info['isp'] . PHP_EOL;
-        $cli .= "Scope: ".$info['scope'] . PHP_EOL;
-        $cli .= "Detail: ".$info['detail'] . PHP_EOL;
+        $cli = "IP: " . $info['ip'] . PHP_EOL;
+        if ($info['as'] != NULL) { $cli .= "AS: " . $info['as'] . PHP_EOL; }
+        if ($info['city'] != NULL) { $cli .= "City: " . $info['city'] . PHP_EOL; }
+        if ($info['region'] != NULL) { $cli .= "Region: " . $info['region'] . PHP_EOL; }
+        if ($info['country'] != NULL) { $cli .= "Country: " . $info['country'] . PHP_EOL; }
+        if ($info['timezone'] != NULL) { $cli .= "Timezone: " . $info['timezone'] . PHP_EOL; }
+        if ($info['loc'] != NULL) { $cli .= "Location: " . $info['loc'] . PHP_EOL; }
+        if ($info['isp'] != NULL) { $cli .= "ISP: " . $info['isp'] . PHP_EOL; }
+        if ($info['scope'] != NULL) { $cli .= "Scope: " . $info['scope'] . PHP_EOL; }
+        if ($info['detail'] != NULL) { $cli .= "Detail: " . $info['detail'] . PHP_EOL; }
         return $cli;
     }
     

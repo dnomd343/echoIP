@@ -65,6 +65,9 @@ function preRount() { // 解析请求路径
     if ($requestUri == '/' || $requestUri == '/ip') { // URI -> / or /ip
         $request['justip'] = true;
         return;
+    } else if ($requestUri == '/help') { // URI -> /help
+        $request['help'] = true;
+        return;
     } else if ($requestUri == '/version') { // URI -> /version
         $request['version'] = true;
         return;
@@ -85,7 +88,9 @@ function preRount() { // 解析请求路径
     } else if ($requestUri == '/query') { // URI -> /query?xxx=xxx
         if ($_GET['error'] == 'true') { $request['error'] = true; }
         if ($_GET['version'] == 'true') { $request['version'] = true; }
+        if ($_GET['help'] == 'true') { $request['help'] = true; }
         if ($_GET['gbk'] == 'true') { $request['gbk'] = true; }
+        if ($_GET['qr'] == 'true') { $request['qr'] = true; }
         if ($_GET['justip'] == 'true') { $request['justip'] = true; }
         if (isset($_GET['ip'])) { $request['ip'] = $_GET['ip']; }
         return;
@@ -128,6 +133,7 @@ function preRount() { // 解析请求路径
 function routeParam() {
     // error -> 请求出错
     // version -> 获取版本数据
+    // help -> 显示帮助信息
     // cli -> 来自命令行下的请求
     // gbk -> 返回数据使用GBK编码
     // qr -> 生成二维码
@@ -137,6 +143,7 @@ function routeParam() {
 
     global $request;
     global $webUri;
+    global $helpContent;
     if ($request['error']) { // 请求出错
         if ($request['cli']) { // 命令行模式
             echo 'Illegal Request' . PHP_EOL;
@@ -145,6 +152,16 @@ function routeParam() {
             header('Location: /error');
         }
         exit; // 退出
+    }
+
+    if ($request['help']) { // 显示帮助信息
+        if (!$request['cli']) { // 网页模式不输出
+            header('HTTP/1.1 302 Moved Temporarily');
+            header('Location: /error');
+        } else {
+            echo $helpContent;
+        }
+        exit;
     }
 
     if ($request['version']) { // 请求版本信息
@@ -216,6 +233,7 @@ $myVersion = 'v1.2';
 $request = array(
     'error' => false,
     'version' => false,
+    'help' => false,
     'cli' => false,
     'gbk' => false,
     'qr' => false,
@@ -229,6 +247,37 @@ if (isset($_SERVER['HTTP_HOST'])) {
         $webUri = $_SERVER['HTTP_HOST'];
     }
 }
+
+$helpContent = PHP_EOL . 'echoIP - ' . $myVersion . ' (https://github.com/dnomd343/echoIP)' . PHP_EOL . '
+Format: http(s)://' . $webUri . '{Request_URI}
+
+    / or /ip -> Show client IP.
+
+    /info or /info/ -> Show detail of client IP.
+    /{ip} or /info/{ip} -> Show detail of {ip}.
+
+    /info/gbk -> Show detail of client IP (use GBK encoding).
+    /{ip}/gbk or /info/{ip}/gbk -> Show detail of {ip} (use GBK encoding).
+
+    /qr -> Show QR code of client IP (use special unicode characters).
+    /qr/ -> Show QR code of client IP (use full characters).
+    /qr/{xx} -> Show QR code of client IP (Use two custom characters).
+
+    /help -> Show help message.
+    /ua -> Show http user-agent of client.
+    /version -> Show version of echoIP and IP database.
+    
+    /query?xxx=xxx&xxx=xxx
+       |-> error=true: Show error request.
+       |-> version=true: Show help message.
+       |-> help=true: Show version of echoIP and IP database.
+       |-> gbk=true: Use GBK encoding.
+       |-> qr=true: Show QR code of client IP.
+       |-> justip=true: Only query the client IP.
+       |-> ip={ip}: Query of specified IP.
+
+';
+
 $webUri = 'http://' . $webUri . '/';
 
 main();
