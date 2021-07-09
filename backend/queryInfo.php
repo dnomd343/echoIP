@@ -25,9 +25,14 @@ function preRount() { // 解析请求路径
     } else if ($requestUri == '/info' || $requestUri == '/info/') { // URI -> /info or /info/
         $request['ip'] = getClientIP();
         return;
+    } else if ($requestUri == '/info/gbk') { // URI -> /info/gbk
+        $request['ip'] = getClientIP();
+        $request['gbk'] = true;
+        return;
     } else if ($requestUri == '/query') { // URI -> /query?xxx=xxx
         if ($_GET['error'] == 'true') { $request['error'] = true; }
         if ($_GET['version'] == 'true') { $request['version'] = true; }
+        if ($_GET['gbk'] == 'true') { $request['gbk'] = true; }
         if ($_GET['justip'] == 'true') { $request['justip'] = true; }
         if (isset($_GET['ip'])) { $request['ip'] = $_GET['ip']; }
         return;
@@ -41,9 +46,21 @@ function preRount() { // 解析请求路径
         }
         return;
     }
+    preg_match('#^/([^/]+?)/gbk$#', $requestUri, $match); // URI -> /{ip}/gbk
+    if (count($match) > 0) {
+        $request['ip'] = $match[1];
+        $request['gbk'] = true;
+        return;
+    }
     preg_match('#^/info/([^/]+?)$#', $requestUri, $match); // URI -> /info/{ip}
     if (count($match) > 0) {
         $request['ip'] = $match[1];
+        return;
+    }
+    preg_match('#^/info/([^/]+?)/gbk$#', $requestUri, $match); // URI -> /info/{ip}/gbk
+    if (count($match) > 0) {
+        $request['ip'] = $match[1];
+        $request['gbk'] = true;
         return;
     }
     $request['error'] = true;
@@ -53,6 +70,7 @@ function routeParam() {
     // error -> 请求出错
     // version -> 获取版本数据
     // cli -> 来自命令行下的请求
+    // gbk -> 返回数据使用GBK编码
     // justip -> 仅查询IP地址
     // ip -> 请求指定IP的数据
 
@@ -104,7 +122,12 @@ function routeParam() {
         }
         exit;
     }
-    echo getIPInfo($ip); // 查询目标IP
+    $info = getIPInfo($ip); // 查询目标IP
+    if ($request['gbk']) {
+        echo 'ijijjiasdjflsdajflsdavasldvmas';
+        $info = iconv('UTF-8', 'gbk', $info);
+    }
+    echo $info;
 }
 
 function main() {
@@ -117,7 +140,8 @@ $request = array(
     'error' => false,
     'version' => false,
     'cli' => false,
-    'justip' => false,
+    'gbk' => false,
+    'justip' => false
 );
 
 main();
