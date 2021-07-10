@@ -1,9 +1,7 @@
 # echoIP
 
 ![license](https://img.shields.io/badge/license-MIT-orange.svg)
-
 ![version](https://img.shields.io/badge/version-v1.3-brightgreen.svg)
-
 ![total-lines](https://img.shields.io/tokei/lines/github/dnomd343/echoIP)
 
 > 显示客户端IP、查询IP详细信息
@@ -23,24 +21,20 @@
 ```
 # 查询客户端IP
 shell> curl ip.343.re
-···
 
 # 查询客户端UA
 shell> curl ip.343.re/ua
-···
 
 # 查询客户端IP的详细信息
 shell> curl ip.343.re/info
-···
 
 # 查询指定IP地址详细信息
 shell> curl ip.343.re/8.8.8.8
-···
 ```
 
 ![echoIP-cli](https://pic.dnomd343.top/images/X4F.png)
 
-更多使用方法可见[命令列表](./docs/cmd-list.md)
+更多使用方法见[命令列表](./docs/cmd-list.md)
 
 ### 网页访问模式
 
@@ -74,7 +68,7 @@ shell> curl ip.343.re/8.8.8.8
 
 [开发接口](./docs/interface.md)
 
-[上游接口](./docs/upstream.md)
+[上游服务](./docs/upstream.md)
 
 ## 许可证
 

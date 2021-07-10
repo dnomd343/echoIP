@@ -15,11 +15,11 @@ shell> docker --version
 使用以下命令安装Docker
 
 ```
-# Debian系
-shell> sudo apt update && sudo apt upgrade
-···
 # RH系
 shell> sudo yum update
+···
+# Debian系
+shell> sudo apt update && sudo apt upgrade
 ···
 # 使用Docker官方脚本安装
 shell> sudo wget -qO- https://get.docker.com/ | bash
@@ -42,14 +42,13 @@ CONTAINER ID   IMAGE                    COMMAND           CREATED          STATU
 48d4b7a644e8   dnomd343/echoip          "sh init.sh"      12 seconds ago   Created                 echoip
 ```
 
-测试容器是否正常工作
+如果服务器1601端口未配置防火墙，在浏览器输入 `http://服务器IP:1601/` 即可访问echoIP页面
 
 ```
+# 测试容器是否正常工作
 shell> curl 127.0.0.1:1601/8.8.8.8
 ···8.8.8.8的详细信息···
 ```
-
-如果服务器1601端口未配置防火墙，在浏览器输入 `http://服务器IP:1601/` 即可访问echoIP页面
 
 常用容器操作命令
 

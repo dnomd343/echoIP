@@ -16,7 +16,7 @@ Unpacking objects: 100% ··· done.
 
 ### 2. 环境检查
 
-确定你的服务器上有PHP环境、Nodejs环境，同时有 `curl` 与 `wget` 工具
+确定你的服务器上有PHP环境、Node.js环境，同时有 `curl` 与 `wget` 工具
 
 ```
 shell> php -v
@@ -36,7 +36,7 @@ shell> wget --version
 
 ```
 shell> systemctl | grep fpm
-php7.3-fpm.service    loaded active running    The PHP 7.3 FastCGI Process Manager
+  php7.3-fpm.service            loaded active running   The PHP 7.3 FastCGI Process Manager
 ```
 
 ### 3. 运行数据解析服务
@@ -148,7 +148,7 @@ server {
 }
 ```
 
-其中PHP-FPM接口在不同系统上不同
+其中PHP-FPM接口在各系统上不同
 
 ```
 # RH系一般为本地9000端口
