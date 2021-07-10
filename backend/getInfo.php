@@ -99,25 +99,7 @@ function getIPInfo($ip) {
             $info['detail'] = $info['as'] . ' ' . $info['isp'];
         }
     }
-
-    global $request;
-    if ($request['cli']) { // 使用命令行模式
-        $cli = "IP: " . $info['ip'] . PHP_EOL;
-        if ($info['as'] != NULL) { $cli .= "AS: " . $info['as'] . PHP_EOL; }
-        if ($info['city'] != NULL) { $cli .= "City: " . $info['city'] . PHP_EOL; }
-        if ($info['region'] != NULL) { $cli .= "Region: " . $info['region'] . PHP_EOL; }
-        if ($info['country'] != NULL) { $cli .= "Country: " . $info['country'] . PHP_EOL; }
-        if ($info['timezone'] != NULL) { $cli .= "Timezone: " . $info['timezone'] . PHP_EOL; }
-        if ($info['loc'] != NULL) { $cli .= "Location: " . $info['loc'] . PHP_EOL; }
-        if ($info['isp'] != NULL) { $cli .= "ISP: " . $info['isp'] . PHP_EOL; }
-        if ($info['scope'] != NULL) { $cli .= "Scope: " . $info['scope'] . PHP_EOL; }
-        if ($info['detail'] != NULL) { $cli .= "Detail: " . $info['detail'] . PHP_EOL; }
-        return $cli;
-    }
-    
-    $info['status'] = 'T';
-    header('Content-Type: application/json; charset=utf-8'); // 以JSON格式发送
-    return json_encode($info);
+    return $info;
 }
 
 function checkSpecial($ip) { // 检查特殊IP地址并返回说明

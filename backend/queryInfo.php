@@ -11,7 +11,12 @@ function formatDate($str) { // 将YYYYMMDD处理为YYYY-MM-DD
     return substr($str, 0, 4) . '-' . substr($str, 4, 2) . '-' . substr($str, 6, 2);
 }
 
-function getQrCode($str, $block) {
+function errorPage() { // 跳转到错误页
+    header('HTTP/1.1 302 Moved Temporarily');
+    header('Location: /error');
+}
+
+function getQrCode($str, $block) { // 用自定义字符绘制二维码
     $qrString = '';
     $qr = QRCode::getMinimumQRCode($str, QR_ERROR_CORRECT_LEVEL_L);
     for ($y = 0; $y < $qr->getModuleCount(); $y++) {
@@ -23,7 +28,7 @@ function getQrCode($str, $block) {
     return $qrString;
 }
 
-function getQrCodeUtf($str) {
+function getQrCodeUtf($str) { // 用特殊Unicode编码绘制二维码
     $qr = QRCode::getMinimumQRCode($str, QR_ERROR_CORRECT_LEVEL_L);
     $length = $qr->getModuleCount();
     for ($y = 0; $y < $length; $y++) {
@@ -31,18 +36,18 @@ function getQrCodeUtf($str) {
             $table[$y][$x] = $qr->isDark($y, $x);
         }
         if ($length % 2) {
-            $table[$y][$length] = false;
+            $table[$y][$length] = false; // 宽度扩充为偶数
         }
     }
-    if ($length % 2) {
+    if ($length % 2) { // 若二维码边长为奇数
         for ($i = 0; $i <= $length; $i++) {
-            $table[$length][$i] = false;
+            $table[$length][$i] = false; // 高度扩充为偶数
         }
         $length++;
     }
-    for ($y = 0; $y < $length; $y += 2) {
+    for ($y = 0; $y < $length; $y += 2) { // 每次输出两行
         for ($x = 0; $x < $length; $x++) {
-            if ($table[$y][$x] && $table[$y + 1][$x]) {
+            if ($table[$y][$x] && $table[$y + 1][$x]) { // 分四种情况输出上下两格
                 echo '█';
             } else if ($table[$y][$x] && !$table[$y + 1][$x]) {
                 echo '▀';
@@ -58,8 +63,8 @@ function getQrCodeUtf($str) {
 
 function preRount() { // 解析请求路径
     global $request;
-    $requestUri = $_SERVER['DOCUMENT_URI'];
-    if ($_GET['cli'] == 'true') {
+    $requestUri = $_SERVER['DOCUMENT_URI']; // 获取不带参数的请求路径
+    if ($_GET['cli'] == 'true') { // 识别nginx附带的cli参数
         $request['cli'] = true;
     }
     if ($requestUri == '/' || $requestUri == '/ip') { // URI -> / or /ip
@@ -127,7 +132,28 @@ function preRount() { // 解析请求路径
         $request['gbk'] = true;
         return;
     }
-    $request['error'] = true;
+    $request['error'] = true; // 未匹配到请求路径
+}
+
+function getInfo($ip) { // 获取并格式化IP数据
+    global $request;
+    $info = getIPInfo($ip);
+    if ($request['cli']) { // 使用命令行模式
+        $cli = "IP: " . $info['ip'] . PHP_EOL;
+        if ($info['as'] != NULL) { $cli .= "AS: " . $info['as'] . PHP_EOL; }
+        if ($info['city'] != NULL) { $cli .= "City: " . $info['city'] . PHP_EOL; }
+        if ($info['region'] != NULL) { $cli .= "Region: " . $info['region'] . PHP_EOL; }
+        if ($info['country'] != NULL) { $cli .= "Country: " . $info['country'] . PHP_EOL; }
+        if ($info['timezone'] != NULL) { $cli .= "Timezone: " . $info['timezone'] . PHP_EOL; }
+        if ($info['loc'] != NULL) { $cli .= "Location: " . $info['loc'] . PHP_EOL; }
+        if ($info['isp'] != NULL) { $cli .= "ISP: " . $info['isp'] . PHP_EOL; }
+        if ($info['scope'] != NULL) { $cli .= "Scope: " . $info['scope'] . PHP_EOL; }
+        if ($info['detail'] != NULL) { $cli .= "Detail: " . $info['detail'] . PHP_EOL; }
+        return $cli;
+    }
+    $info['status'] = 'T';
+    header('Content-Type: application/json; charset=utf-8'); // 以JSON格式发送
+    return json_encode($info);
 }
 
 function routeParam() {
@@ -148,18 +174,16 @@ function routeParam() {
         if ($request['cli']) { // 命令行模式
             echo 'Illegal Request' . PHP_EOL;
         } else {
-            header('HTTP/1.1 302 Moved Temporarily');
-            header('Location: /error');
+            errorPage();
         }
         exit; // 退出
     }
 
     if ($request['help']) { // 显示帮助信息
-        if (!$request['cli']) { // 网页模式不输出
-            header('HTTP/1.1 302 Moved Temporarily');
-            header('Location: /error');
-        } else {
+        if ($request['cli']) {
             echo $helpContent;
+        } else {
+            errorPage(); // 网页模式不输出
         }
         exit;
     }
@@ -178,16 +202,15 @@ function routeParam() {
     }
 
     if ($request['qr']) { // 生成二维码
-        if (!$request['cli']) { // 网页模式不输出
-            header('HTTP/1.1 302 Moved Temporarily');
-            header('Location: /error');
-        } else {
-            echo $webUri . PHP_EOL;
+        if ($request['cli']) {
+            echo $webUri . '?ip=' . getClientIP() . PHP_EOL;
             if (isset($request['qr_fill'])) { // 使用字符填充生成二维码
                 echo getQrCode($webUri . '?ip=' . getClientIP(), $request['qr_fill']);
             } else { // 使用特殊Unicode字符生成二维码
                 echo getQrCodeUtf($webUri . '?ip=' . getClientIP());
             }
+        } else {
+            errorPage(); // 网页模式不输出
         }
         exit;
     }
@@ -216,9 +239,9 @@ function routeParam() {
         }
         exit;
     }
-    $info = getIPInfo($ip); // 查询目标IP
+    $info = getInfo($ip); // 查询目标IP
     if ($request['gbk']) {
-        $info = iconv('UTF-8', 'gbk', $info);
+        $info = iconv('UTF-8', 'gbk', $info); // 输出为GBK编码
     }
     echo $info;
 }
@@ -228,7 +251,7 @@ function main() {
     routeParam(); // 处理请求参数
 }
 
-$myVersion = 'v1.2';
+$myVersion = 'v1.3';
 
 $request = array(
     'error' => false,
@@ -240,16 +263,17 @@ $request = array(
     'justip' => false
 );
 
-$webUri = 'ip.343.re';
+$webSite = 'ip.343.re'; // 默认域名
 if (isset($_SERVER['HTTP_HOST'])) {
     preg_match('#^127.0.0.1#', $_SERVER['HTTP_HOST'], $match); // 排除127.0.0.1下的host
     if (count($match) == 0) {
-        $webUri = $_SERVER['HTTP_HOST'];
+        $webSite = $_SERVER['HTTP_HOST'];
     }
 }
+$webUri = 'http://' . $webSite . '/';
 
 $helpContent = PHP_EOL . 'echoIP - ' . $myVersion . ' (https://github.com/dnomd343/echoIP)' . PHP_EOL . '
-Format: http(s)://' . $webUri . '{Request_URI}
+Format: http(s)://' . $webSite . '{Request_URI}
 
     / or /ip -> Show client IP.
 
@@ -277,8 +301,6 @@ Format: http(s)://' . $webUri . '{Request_URI}
        |-> ip={ip}: Query of specified IP.
 
 ';
-
-$webUri = 'http://' . $webUri . '/';
 
 main();
 
