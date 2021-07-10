@@ -293,8 +293,8 @@ Format: http(s)://' . $webSite . '{Request_URI}
     
     /query?xxx=xxx&xxx=xxx
        |-> error=true: Show error request.
-       |-> version=true: Show help message.
-       |-> help=true: Show version of echoIP and IP database.
+       |-> version=true: Show version of echoIP and IP database.
+       |-> help=true: Show help message.
        |-> gbk=true: Use GBK encoding.
        |-> qr=true: Show QR code of client IP.
        |-> justip=true: Only query the client IP.
