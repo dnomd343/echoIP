@@ -39,10 +39,21 @@ shell> systemctl | grep fpm
   php7.3-fpm.service            loaded active running   The PHP 7.3 FastCGI Process Manager
 ```
 
-### 3. 运行数据解析服务
+### 3. qqwry.dat配置
+
+获取并解密纯真IP数据库
 
 ```
-# qqwry.dat数据解析服务
+shell> cd /var/www/echoIP/backend
+# 运行升级脚本
+shell> sh qqwryUpdate.sh
+···
+qqwry.dat update complete.
+```
+
+开启数据解析服务
+
+```
 shell> cd /var/www/echoIP/backend/qqwryFormat
 # 默认端口为1602，注意不要重复开启
 shell> ./start.sh

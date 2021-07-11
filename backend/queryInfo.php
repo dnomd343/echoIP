@@ -251,7 +251,7 @@ function main() {
     routeParam(); // 处理请求参数
 }
 
-$myVersion = 'v1.3';
+$myVersion = 'v1.4';
 
 $request = array(
     'error' => false,

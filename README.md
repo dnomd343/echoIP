@@ -1,7 +1,7 @@
 # echoIP
 
 ![license](https://img.shields.io/badge/license-MIT-orange.svg)
-![version](https://img.shields.io/badge/version-v1.3-brightgreen.svg)
+![version](https://img.shields.io/badge/version-v1.4-brightgreen.svg)
 ![total-lines](https://img.shields.io/tokei/lines/github/dnomd343/echoIP)
 
 > 显示客户端IP、查询IP详细信息

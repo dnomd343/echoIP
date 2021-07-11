@@ -42,7 +42,9 @@ CONTAINER ID   IMAGE                    COMMAND           CREATED          STATU
 48d4b7a644e8   dnomd343/echoip          "sh init.sh"      12 seconds ago   Created                 echoip
 ```
 
-如果服务器1601端口未配置防火墙，在浏览器输入 `http://服务器IP:1601/` 即可访问echoIP页面
+如果服务器1601端口未配置防火墙，在浏览器输入 `http://服务器IP:1601/` 即可访问echoIP页面。
+
+容器开启后会自动拉取 `qqwry.dat` 离线数据库，如果网络较慢可能需要数分钟时间，期间查询信息可能不完全。可以在htop等进程管理工具中查看docker内部进程，若监视到node服务运行则拉取完成。
 
 ```
 # 测试容器是否正常工作
