@@ -1,7 +1,8 @@
 <?php
 
-include("qrcode.php");
-include("getInfo.php");
+include('redis.php');
+include('qrcode.php');
+include('getInfo.php');
 
 function getClientIP() { // 获取客户端IP
     return isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR'];
@@ -137,7 +138,18 @@ function preRount() { // 解析请求路径
 
 function getInfo($ip) { // 获取并格式化IP数据
     global $request;
-    $info = getIPInfo($ip);
+    global $redisSetting;
+    if ($redisSetting['enable']) { // 启用Redis缓存
+        $info = getRedisData($ip); // 查询缓存数据
+        if ($info == NULL) { // 缓存未命中
+            $info = getIPInfo($ip); // 发起查询
+            setRedisData($ip, json_encode($info)); // 缓存数据
+        } else { // 缓存命中
+            $info = json_decode($info, true); // 使用缓存数据
+        }
+    } else { // 未启用Redis缓存
+        $info = getIPInfo($ip);
+    }
     if ($request['cli']) { // 使用命令行模式
         $cli = "IP: " . $info['ip'] . PHP_EOL;
         if ($info['as'] != NULL) { $cli .= "AS: " . $info['as'] . PHP_EOL; }

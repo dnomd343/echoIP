@@ -39,6 +39,25 @@ shell> systemctl | grep fpm
   php7.3-fpm.service            loaded active running   The PHP 7.3 FastCGI Process Manager
 ```
 
+确认Redis正常运行
+
+```
+shell> redis-cli --version
+···Redis版本信息···
+
+# 登录redis服务
+shell> redis-cli
+# 若服务主机非默认参数，使用以下命令登录
+shell> redis-cli -h {hostname} -p {port}
+
+# 若配置有密码则先认证
+127.0.0.1:6379> auth {passwd}
+
+# 登录后确认连接
+127.0.0.1:6379> ping
+PONG
+```
+
 ### 3. qqwry.dat配置
 
 获取并解密纯真IP数据库
@@ -59,7 +78,25 @@ shell> cd /var/www/echoIP/backend/qqwryFormat
 shell> ./start.sh
 ```
 
-### 4. 配置Web服务
+### 4. 配置Redis连接
+
+Redis连接参数位于 `backend/redis.php` 文件中，默认如下
+
+```
+$redisSetting = array(
+    'enable' => true,
+    'host' => '127.0.0.1',
+    'port' => 6379,
+    'passwd' => '',
+    'prefix' => 'echoip-',
+    'cache_time' => 3600000
+);
+```
+
+按当前服务器配置修改，`enable` 为false时可关闭缓存功能，无密码时将 `passwd` 留空即可，键值前缀与缓存时间（单位ms）按实际需要修改。
+
+
+### 5. 配置Web服务
 
 配置网页服务器代理，需要额外占用除80与443之外的一个端口，默认为TCP/1601，可按需修改。这里使用Nginx作为示例，其他Web服务原理类似。
 
