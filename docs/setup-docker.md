@@ -42,9 +42,22 @@ CONTAINER ID   IMAGE                    COMMAND           CREATED          STATU
 48d4b7a644e8   dnomd343/echoip          "sh init.sh"      12 seconds ago   Created                 echoip
 ```
 
-如果服务器1601端口未配置防火墙，在浏览器输入 `http://服务器IP:1601/` 即可访问echoIP页面。
+容器开启后会自动拉取 `qqwry.dat` 离线数据库，如果网络较慢可能需要数分钟时间，期间查询信息不完整。可以在htop等进程管理工具中查看docker内部进程，在拉取期间将存在以下进程
 
-容器开启后会自动拉取 `qqwry.dat` 离线数据库，如果网络较慢可能需要数分钟时间，期间查询信息可能不完全。可以在htop等进程管理工具中查看docker内部进程，若监视到node服务运行则拉取完成。
+```
+sh init.sh
+  |--sh /var/www/echoIP/backend/qqwryUpdate.sh
+    |--wget http://update.cz88.net/ip/qqwry.rar
+```
+
+在该命令执行完成以后，基于node.js的qqwry格式解析服务将启动，其进程如下
+
+```
+sh init.sh
+  |--node /var/www/echoIP/backend/qqwryFormat/server.js
+```
+
+若监视到echoIP容器中node服务运行，则数据库已拉取完成，若服务器1601端口未配置防火墙，在浏览器输入 `http://服务器IP:1601/` 即可访问echoIP页面。
 
 ```
 # 测试容器是否正常工作
