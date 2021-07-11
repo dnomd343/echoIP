@@ -1,3 +1,4 @@
+/usr/bin/redis-server /etc/redis.conf
 /usr/sbin/php-fpm7
 /usr/sbin/nginx
 sh /var/www/echoIP/backend/qqwryUpdate.sh
