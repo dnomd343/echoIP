@@ -30,3 +30,4 @@ php unlock.php
 cd ..
 cp -f temp/qqwry.dat qqwry.dat
 rm -rf temp/
+echo "qqwry.dat update complete."
