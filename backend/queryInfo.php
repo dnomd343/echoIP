@@ -5,7 +5,11 @@ include('qrcode.php');
 include('getInfo.php');
 
 function getClientIP() { // 获取客户端IP
-    return isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR'];
+    if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+        return trim(explode(",", $_SERVER['HTTP_X_FORWARDED_FOR'])[0]);
+    } else {
+        return $_SERVER['REMOTE_ADDR'];
+    }
 }
 
 function formatDate($str) { // 将YYYYMMDD处理为YYYY-MM-DD
