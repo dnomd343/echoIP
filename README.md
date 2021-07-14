@@ -1,4 +1,5 @@
 <p align="center">
+  <br />
   <img width="80px" src="./assets/img/favicon.png" align="center" alt="echoIP" />
   <h1 align="center">echoIP</h1>
   <p align="center">显示客户端IP、查询IP详细信息</p>
@@ -38,7 +39,7 @@ shell> curl ip.343.re/8.8.8.8
 
 ![echoIP-cli](https://pic.dnomd343.top/images/X4F.png)
 
-更多使用方法见[命令列表](./docs/cmd-list.md)
+更多使用方法见[命令列表](https://github.com/dnomd343/echoIP/wiki/cmd-list)
 
 ### 网页访问模式
 
@@ -58,21 +59,21 @@ shell> curl ip.343.re/8.8.8.8
 
 > 如果想在自己域名下建立echoIP服务，可按如下方式部署
 
-[容器部署方式（推荐）](./docs/setup-docker.md)
+[容器部署方式（推荐）](https://github.com/dnomd343/echoIP/wiki/setup-docker)
 
-[常规部署方式](./docs/setup.md)
+[常规部署方式](https://github.com/dnomd343/echoIP/wiki/setup)
 
-[CDN注意事项](./docs/cdn.md)
+[CDN注意事项](https://github.com/dnomd343/echoIP/wiki/cdn)
 
-[Proxy Protocol支持](./docs/setup-proxy-protocol.md)
+[Proxy Protocol支持](https://github.com/dnomd343/echoIP/wiki/proxy-protocol)
 
 ## 开发资料
 
-[容器构建](./docs/docker.md)
+[容器构建](https://github.com/dnomd343/echoIP/wiki/docker-build)
 
-[开发接口](./docs/interface.md)
+[开发接口](https://github.com/dnomd343/echoIP/wiki/interface)
 
-[上游服务](./docs/upstream.md)
+[上游服务](https://github.com/dnomd343/echoIP/wiki/upstream)
 
 ## 许可证
 
