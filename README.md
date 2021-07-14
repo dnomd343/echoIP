@@ -1,10 +1,14 @@
-# echoIP
-
-![license](https://img.shields.io/badge/license-MIT-orange.svg)
-![version](https://img.shields.io/badge/version-v1.4-brightgreen.svg)
-![total-lines](https://img.shields.io/tokei/lines/github/dnomd343/echoIP)
-
-> 显示客户端IP、查询IP详细信息
+<p align="center">
+  <img width="80px" src="./assets/img/favicon.png" align="center" alt="echoIP" />
+  <h1 align="center">echoIP</h1>
+  <p align="center">显示客户端IP、查询IP详细信息</p>
+</p>
+<p align="center">
+  <img alt="license" src="https://img.shields.io/badge/license-MIT-orange.svg" />
+  <img alt="version" src="https://img.shields.io/badge/version-v1.4-brightgreen.svg" />
+  <img alt="total-lines" src="https://img.shields.io/tokei/lines/github/dnomd343/echoIP" />
+  <br />
+</p>
 
 + 获取IP地址的AS、地址、ISP、网段等详细信息，支持IPv4与IPv6地址。
 
@@ -38,7 +42,7 @@ shell> curl ip.343.re/8.8.8.8
 
 ### 网页访问模式
 
-你可以直接在 [https://ip.343.re](https://ip.343.re) 或 [https://ip.dnomd343.top](https://ip.dnomd343.top) 上进行查询，或者将项目部署到自己的服务器上。
+你可以直接在 [ip.343.re](https://ip.343.re/) 或 [ip.dnomd343.top](https://ip.dnomd343.top/) 上进行查询，或者将项目部署到自己的服务器上。
 
 ![echoIP-web](https://pic.dnomd343.top/images/FR5.png)
 
