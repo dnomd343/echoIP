@@ -27,6 +27,13 @@ if (\$fp) {
 EOF
 
 php unlock.php
+
+file_size=`du -b qqwry.dat | awk '{print $1}'`
+if [ $file_size = "0" ]; then
+    echo "qqwry.dat update fail."
+    exit
+fi
+
 cd ..
 cp -f temp/qqwry.dat qqwry.dat
 rm -rf temp/
