@@ -99,6 +99,9 @@ function getIPInfo($ip) {
             $info['detail'] = $info['as'] . ' ' . $info['isp'];
         }
     }
+    if (trim($info['detail']) == '') {
+        $info['detail'] = null;
+    }
     return $info;
 }
 
