@@ -5,10 +5,12 @@ include("qqwry.php");
 include("ipinfo.php");
 include("ipip.php");
 include("cityCN.php");
+include("specialIP.php");
 
 function getIPInfo($ip) {
+    // TODO: format ipv6
     $specialInfo = checkSpecial($ip); // 检查是否为特殊IP段
-    if (isset($specialInfo)) {
+    if ($specialInfo !== null) {
         $info['ip'] = $ip;
         $info['as'] = null;
         $info['city'] = null;
@@ -16,9 +18,9 @@ function getIPInfo($ip) {
         $info['country'] = null;
         $info['timezone'] = null;
         $info['loc'] = null;
-        $info['isp'] = $specialInfo['en'];
-        $info['scope'] = null;
-        $info['detail'] = $specialInfo['cn'];
+        $info['isp'] = $specialInfo['descEn'];
+        $info['scope'] = $specialInfo['scope'];
+        $info['detail'] = $specialInfo['descCn'];
     } else {
         $IPIP = new IPDB('ipipfree.ipdb');
         $addr = $IPIP->getDistrict($ip); // 获取IPIP.net数据
@@ -103,38 +105,6 @@ function getIPInfo($ip) {
         $info['detail'] = null;
     }
     return $info;
-}
-
-function checkSpecial($ip) { // 检查特殊IP地址并返回说明
-    if ('::1' === $ip) {
-        $info['en'] = 'localhost IPv6 access';
-        $info['cn'] = '本地IPv6地址';
-    }
-    if (stripos($ip, 'fe80:') === 0) {
-        $info['en'] = 'link-local IPv6 access';
-        $info['cn'] = '链路本地IPv6地址';
-    }
-    if (strpos($ip, '127.') === 0) {
-        $info['en'] = 'localhost IPv4 access';
-        $info['cn'] = '本地IPv4地址';
-    }
-    if (strpos($ip, '10.') === 0) {
-        $info['en'] = 'private IPv4 access';
-        $info['cn'] = '私有IPv4地址';
-    }
-    if (preg_match('/^172\.(1[6-9]|2\d|3[01])\./', $ip) === 1) {
-        $info['en'] = 'private IPv4 access';
-        $info['cn'] = '私有IPv4地址';
-    }
-    if (strpos($ip, '192.168.') === 0) {
-        $info['en'] = 'private IPv4 access';
-        $info['cn'] = '私有IPv4地址';
-    }
-    if (strpos($ip, '169.254.') === 0) {
-        $info['en'] = 'link-local IPv4 access';
-        $info['cn'] = '链路本地IPv4地址';
-    }
-    return isset($info) ? $info : null;
 }
 
 function tryCIDR($beginIP, $endIP) { // 给定IP范围，尝试计算CIDR

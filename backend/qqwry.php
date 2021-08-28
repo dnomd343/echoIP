@@ -26,7 +26,7 @@ class QQWry {
     private $recordNum; // 总记录条数
     private $formatPort = '1602'; // 数据格式化分析接口
 
-    public function __construct($fileName) { // 构造函数
+    public function __construct($fileName = 'qqwry.dat') { // 构造函数
         $this->fp = fopen($fileName, 'rb');
         $this->firstRecord = $this->read4byte();
         $this->lastRecord  = $this->read4byte();
