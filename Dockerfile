@@ -6,7 +6,7 @@ FROM alpine
 LABEL maintainer="dnomd343"
 COPY . /var/www/echoIP
 COPY --from=iconv /tmp/iconv/ /usr/local/lib/
-RUN apk --update add --no-cache nginx curl nodejs redis php7 php7-fpm php7-json php7-iconv php7-redis php7-sqlite3 php7-openssl php7-mbstring && \
+RUN apk --update add --no-cache nginx curl nodejs redis php7 php7-fpm php7-gmp php7-json php7-iconv php7-redis php7-sqlite3 php7-openssl php7-mbstring && \
     rm /usr/lib/php7/modules/iconv.so && ln -s /usr/local/lib/iconv.so /usr/lib/php7/modules/ && \
     mv /usr/local/lib/libiconv.so /usr/local/lib/libiconv.so.2 && \
     mkdir -p /run/nginx && touch /run/nginx/nginx.pid && \
