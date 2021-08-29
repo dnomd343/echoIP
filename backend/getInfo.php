@@ -8,7 +8,9 @@ include("cityCN.php");
 include("specialIP.php");
 
 function getIPInfo($ip) {
-    // TODO: format ipv6
+    if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+        $ip = long2ip6(ip2long6($ip)); // 压缩IPv6地址
+    }
     $specialInfo = checkSpecial($ip); // 检查是否为特殊IP段
     if ($specialInfo !== null) {
         $info['ip'] = $ip;
