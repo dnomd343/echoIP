@@ -1,10 +1,19 @@
 #!/bin/sh
 
+ua="Mozilla/3.0 (compatible; Indy Library)"
+
 cd `dirname $0`
 mkdir -p temp
 cd temp
-wget http://update.cz88.net/ip/copywrite.rar
-wget http://update.cz88.net/ip/qqwry.rar
+
+if [ -n "$SOCKS5_CN" ]; then
+  socks5=" --socks5 $SOCKS5_CN"
+else
+  socks5=""
+fi
+
+curl http://update.cz88.net/ip/copywrite.rar -o copywrite.rar$socks5 --user-agent '$ua'
+curl http://update.cz88.net/ip/qqwry.rar -o qqwry.rar$socks5 --user-agent '$ua'
 
 cat > unlock.php <<EOF 
 <?php
@@ -31,6 +40,7 @@ php unlock.php
 file_size=`du qqwry.dat | awk '{print $1}'`
 if [ $file_size = "0" ]; then
     echo "qqwry.dat update fail."
+    cd .. && rm -rf temp/
     exit
 fi
 
