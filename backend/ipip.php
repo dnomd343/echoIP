@@ -43,7 +43,14 @@ class IPDB {
         if ($node <= 0) {
             return NULL;
         }
-        return explode("\t", $this->getData($node));
+        $data = explode("\t", $this->getData($node));
+        foreach ($data as &$field) {
+            $field = trim($field);
+        }
+        if ($data[1] === '中国' && $data[2] === '中国') {
+            $data[1] = $data[2] = '';
+        }
+        return $data;
     }
 
     private function getNode($ip) { // 获取节点编号
