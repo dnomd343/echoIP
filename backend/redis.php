@@ -6,7 +6,7 @@ $redisSetting = array(
     'port' => 6379,
     'passwd' => '',
     'prefix' => 'echoip-',
-    'cache_time' => 3600000
+    'cache_time' => 21600 // 缓存6小时
 );
 
 function getRedisData($ip) { // 查询Redis，不存在返回NULL
@@ -30,7 +30,7 @@ function setRedisData($ip, $data) { // 写入信息到Redis
     }
     $redisKey = $redisSetting['prefix'] . $ip;
     $redis->set($redisKey, $data); // 写入数据库
-    $redis->pexpire($redisKey, $redisSetting['cache_time']); // 设置过期时间
+    $redis->pexpire($redisKey, $redisSetting['cache_time'] * 1000); // 设置过期时间
 }
 
 ?>
